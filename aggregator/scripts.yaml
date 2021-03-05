@@ -1,0 +1,21 @@
+scripts:
+  start:
+    deno run --allow-net=:3004 --allow-run --allow-env simulator.ts
+  build:
+    docker build -t hugin-aggregator .
+  tag:
+    - vr run build
+    - docker tag hugin-aggregator localhost:5000/hugin-aggregator
+  push:
+    - vr run tag
+    - docker push localhost:5000/hugin-aggregator
+  apply:
+    kubectl apply -f deployment/hugin-aggregator.yml
+  restart:
+    kubectl rollout restart --namespace=kube-system deployment/hugin-aggregator
+  redeploy:
+    - vr run push
+    - vr run apply
+    - vr run restart
+  port-forward:
+    kubectl port-forward service/hugin-aggregator http

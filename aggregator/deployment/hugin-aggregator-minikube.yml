@@ -1,0 +1,40 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: kube-system
+  name: hugin-aggregator
+  labels:
+    app: hugin-aggregator
+spec:
+  selector:
+    matchLabels:
+      app: hugin-aggregator
+  template:
+    metadata:
+      labels:
+        app: hugin-aggregator
+        tier: frontend
+    spec:
+      containers:
+        - name: hugin-aggregator
+          image: localhost:5000/hugin-aggregator
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3003
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hugin-aggregator
+  namespace: kube-system
+spec:
+  type: LoadBalancer
+  selector:
+    app: hugin-aggregator
+    tier: frontend
+  ports:
+    - name: http
+      protocol: TCP
+      port: 3003
+---

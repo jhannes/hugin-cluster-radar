@@ -1,0 +1,44 @@
+body {
+    color: rebeccapurple;
+}
+
+.app h2 {
+    text-align: center;
+}
+.app .pods {
+    display: flex;
+    flex-direction: row;
+}
+
+
+.dot {
+    height: 1em;
+    width: 1em;
+    background-color: grey;
+    border-radius: 50%;
+    display: inline-block;
+    margin: 0.2em;
+}
+
+.Failed .dot, .Offline .dot {
+    background-color: red;
+}
+
+.Pending .dot {
+    animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+    50% {
+        opacity: 0;
+    }
+}
+
+.busy .dot {
+    background-color: green;
+}
+
+.unhealthy .dot {
+    background-color: gold;
+}
+

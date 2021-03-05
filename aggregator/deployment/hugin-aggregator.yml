@@ -1,0 +1,80 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: default
+  name: hugin-aggregator
+  labels:
+    app: hugin-aggregator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hugin-aggregator
+  template:
+    metadata:
+      labels:
+        app: hugin-aggregator
+        tier: frontend
+    spec:
+      serviceAccount: hugin-aggregator
+      containers:
+        - name: hugin-aggregator
+          image: hugin-aggregator
+          ports:
+            - containerPort: 3003
+      imagePullSecrets:
+        - name: bwlt-deploy
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: hugin-aggregator
+  namespace: default
+  labels:
+    app: hugin-aggregator
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: hugin-aggregator
+subjects:
+  - kind: ServiceAccount
+    name: hugin-aggregator
+    namespace: default
+roleRef:
+  kind: ClusterRole
+  name: hugin-aggregator
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: hugin-aggregator
+  labels:
+    app: hugin-aggregator
+rules:
+  - apiGroups: [""] # "" indicates the core API group
+    resources:
+      - namespaces
+      - pods
+    verbs:
+      - get
+      - watch
+      - list
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hugin-aggregator
+  namespace: default
+spec:
+  type: LoadBalancer
+  selector:
+    app: hugin-aggregator
+    tier: frontend
+  ports:
+    - name: http
+      protocol: TCP
+      port: 3003
+---
