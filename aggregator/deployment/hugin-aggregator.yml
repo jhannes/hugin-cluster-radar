@@ -24,7 +24,7 @@ spec:
           ports:
             - containerPort: 3003
       imagePullSecrets:
-        - name: bwlt-deploy
+        - name: deploy-secret
 ---
 apiVersion: v1
 kind: ServiceAccount

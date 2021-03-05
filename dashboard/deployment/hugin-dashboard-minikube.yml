@@ -1,0 +1,54 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: kube-system
+  name: hugin-dashboard
+  labels:
+    app: hugin-dashboard
+spec:
+  selector:
+    matchLabels:
+      app: hugin-dashboard
+  template:
+    metadata:
+      labels:
+        app: hugin-dashboard
+        tier: frontend
+    spec:
+      containers:
+        - name: hugin-dashboard
+          volumeMounts:
+            - name: hugin-config
+              mountPath: /usr/share/nginx/html/config
+          image: localhost:5000/hugin-dashboard
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+      volumes:
+        - name: hugin-config
+          configMap:
+            name: hugin-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hugin-dashboard
+  namespace: kube-system
+spec:
+  type: LoadBalancer
+  selector:
+    app: hugin-dashboard
+    tier: frontend
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  namespace: kube-system
+  name: hugin-config
+data:
+---

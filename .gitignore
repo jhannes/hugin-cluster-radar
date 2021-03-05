@@ -1,3 +1,5 @@
 .idea
 node_modules
 *.iml
+aggregator/deployment/local
+dashboard/deployment/local

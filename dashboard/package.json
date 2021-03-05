@@ -1,12 +1,19 @@
 {
-  "name": "client",
+  "name": "hugin-dashboard",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "start": "snowpack dev",
     "build": "snowpack build",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "docker:build": "docker build -t hugin-dashboard .",
+    "docker:run": "docker run --rm --publish 1337:80 hugin-dashboard",
+    "minikube:docker:push": "docker tag hugin-dashboard localhost:5000/hugin-dashboard && docker push localhost:5000/hugin-dashboard",
+    "minikube:kubectl:apply": "kubectl apply -f deployment/hugin-dashboard-minikube.yml",
+    "minikube:kubectl:restart": "kubectl rollout restart deployment/hugin-dashboard",
+    "minikube:kubectl:port-forward": "kubectl port-forward service/hugin-dashboard http",
+    "minikube:redeploy": "npm run docker:build && npm run minikube:docker:push && npm run minikube:kubectl:apply && npm run minikube:kubectl:restart",
+    "redeploy":  "npm run minikube:redeploy"
   },
   "devDependencies": {
     "@snowpack/plugin-react-refresh": "^2.4.0",
