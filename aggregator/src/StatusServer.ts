@@ -58,6 +58,10 @@ export class StatusServer<T> {
   async broadCast(message: string) {
     for (const socket of Object.keys(this.sockets)) {
       console.log("sending to", socket);
+      if (this.sockets[socket].isClosed) {
+        console.warn("socket was closed without being removed!", socket);
+        continue;
+      }
       try {
         await this.sockets[socket].send(message);
       } catch (e) {
