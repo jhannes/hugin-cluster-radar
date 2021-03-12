@@ -107,9 +107,17 @@ export function ClusterStatusTree({
           .map((ns) => (
             <div className={"namespace " + ns} key={ns}>
               <h2>{ns}</h2>
-                {Object.keys(tree[ns]).sort().map((app) => (
-                    <AppStatusView key={app} app={app} appTree={tree[ns][app]} />
-                ))}
+              <div className="apps">
+                {Object.keys(tree[ns])
+                  .sort()
+                  .map((app) => (
+                    <AppStatusView
+                      key={app}
+                      app={app}
+                      appTree={tree[ns][app]}
+                    />
+                  ))}
+              </div>
             </div>
           ))}
       </div>

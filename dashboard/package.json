@@ -6,6 +6,7 @@
   "scripts": {
     "start": "snowpack dev",
     "build": "snowpack build",
+    "format": "prettier --write src",
     "docker:build": "docker build -t hugin-dashboard .",
     "docker:run": "docker run --rm --publish 1337:80 hugin-dashboard",
     "minikube:docker:push": "docker tag hugin-dashboard localhost:5000/hugin-dashboard && docker push localhost:5000/hugin-dashboard",

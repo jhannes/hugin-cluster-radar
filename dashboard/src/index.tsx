@@ -15,7 +15,7 @@ function ClusterStatus({ url, cluster }: { url: string; cluster: string }) {
 function App() {
   // @ts-ignore
   const servers: Record<string, string> = window.servers || {
-    "Simulator": "ws://localhost:3004/ws"
+    Simulator: "ws://localhost:3004/ws",
   };
   return (
     <>

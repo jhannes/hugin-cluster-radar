@@ -2,6 +2,34 @@ body {
     color: rebeccapurple;
 }
 
+h1, h2, h3 {
+    margin: 0 0 0.25em 0;
+}
+
+.cluster .namespaces {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.25em;
+}
+
+.namespace {
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 1em;
+    flex-grow: 1;
+}
+
+.namespace h2 {
+    text-align: center;
+}
+
+.namespace .apps {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.25em;
+}
 
 .app h3 {
     text-align: center;
@@ -18,6 +46,22 @@ body {
     text-align: center;
 }
 
+.app {
+    border: 1px solid black;
+    padding-left: 0.25em;
+    padding-right: 0.25em;
+    border-radius: 5px;
+    min-width: 100px;
+}
+
+.app h2 {
+    text-align: center;
+}
+
+.pod {
+    padding-left: 0.25em;
+    padding-right: 0.25em;
+}
 
 .dot {
     height: 1em;
@@ -42,49 +86,11 @@ body {
     }
 }
 
-h1, h2, h3 {
-    margin: 0 0 0.25em 0;
-}
-
 .busy .dot {
     background-color: green;
 }
 
 .unhealthy .dot {
     background-color: gold;
-}
-
-.cluster .namespaces {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
-    grid-gap: 0.5em;
-}
-
-.namespace {
-    border: 1px solid black;
-    border-radius: 5px;
-    padding: 1em;
-}
-
-.namespace {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    grid-gap: 0.2em;
-}
-
-.namespace h2 {
-    grid-column-start: 1;
-    grid-column-end: -1;
-    text-align: center;
-}
-
-
-.app {
-    border: 1px solid black;
-    border-radius: 5px;
-}
-
-.app h2 {
-    text-align: center;
 }
 
