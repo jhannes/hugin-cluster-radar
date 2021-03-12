@@ -101,15 +101,15 @@ export function ClusterStatusTree({
     <div className={"cluster " + cluster}>
       <h1>{cluster}</h1>
       <div>Last update: {lastUpdate}</div>
-      <div className="apps">
+      <div className="namespaces">
         {Object.keys(tree)
           .sort()
           .map((ns) => (
             <div className={"namespace " + ns} key={ns}>
               <h2>{ns}</h2>
-              {Object.keys(tree[ns]).map((app) => (
-                <AppStatusView key={app} app={app} appTree={tree[ns][app]} />
-              ))}
+                {Object.keys(tree[ns]).sort().map((app) => (
+                    <AppStatusView key={app} app={app} appTree={tree[ns][app]} />
+                ))}
             </div>
           ))}
       </div>

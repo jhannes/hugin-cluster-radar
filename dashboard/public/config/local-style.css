@@ -1,0 +1,16 @@
+.namespace.iam {
+    grid-column-start: 1;
+    background-color: lightyellow;
+}
+
+.app.frr-api {
+    background-color: aqua;
+}
+
+.app.frr-server {
+    background-color: lightblue;
+}
+
+.app.varsling-twilio-server {
+    background-color: aquamarine;
+}

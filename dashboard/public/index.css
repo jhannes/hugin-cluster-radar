@@ -2,12 +2,20 @@ body {
     color: rebeccapurple;
 }
 
-.app h2 {
+
+.app h3 {
     text-align: center;
 }
+
 .app .pods {
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
+}
+
+.app .pod {
+    flex: 1;
+    text-align: center;
 }
 
 
@@ -34,11 +42,49 @@ body {
     }
 }
 
+h1, h2, h3 {
+    margin: 0 0 0.25em 0;
+}
+
 .busy .dot {
     background-color: green;
 }
 
 .unhealthy .dot {
     background-color: gold;
+}
+
+.cluster .namespaces {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+    grid-gap: 0.5em;
+}
+
+.namespace {
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 1em;
+}
+
+.namespace {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-gap: 0.2em;
+}
+
+.namespace h2 {
+    grid-column-start: 1;
+    grid-column-end: -1;
+    text-align: center;
+}
+
+
+.app {
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+.app h2 {
+    text-align: center;
 }
 
