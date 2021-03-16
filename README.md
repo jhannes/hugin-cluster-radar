@@ -78,6 +78,15 @@ data:
     window.servers = {
       "My Cluster": "ws://hugin-aggregator-url.example.com/ws"
     };
+  local-style.css: |+
+    .namespace.default {
+        grid-column-start: 1;
+        background-color: lightyellow;
+    }
+
+    .app.someapp {
+        background-color: aqua;
+    }
 ```
 
 1. Apply the configmap with `kubectl apply -f hugin-config.yml`
