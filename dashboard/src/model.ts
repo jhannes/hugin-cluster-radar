@@ -27,6 +27,7 @@ export interface BwStatus {
   buildTime?: Date;
   traffic?: number;
   errors?: number;
+  errorMessages?: Record<string, string>;
   healthChecks?: Record<
     string,
     { healthy: boolean; message?: string; timestamp: Date }

@@ -28,16 +28,24 @@ function useUptime(startTime: Date) {
 }
 
 function PodStatusView({ pod }: { pod: PodStatus<BwStatus> }) {
+  function handleClickPod() {
+    console.log(pod);
+  }
+
   const uptime = useUptime(new Date(pod.startTime));
   const healthChecks = pod.status?.healthChecks || {};
-  const unhealthyHealthChecks = Object.values(healthChecks).filter((h) => !h.healthy);
+  const unhealthyHealthChecks = Object.values(healthChecks).filter(
+    (h) => !h.healthy
+  );
   const traffic = pod.status?.traffic || 0;
   const busy = traffic > 100;
-  const unhealthy = unhealthyHealthChecks.length > 0 || (pod.status?.errors && pod.status.errors > 0);
+  const unhealthy =
+    unhealthyHealthChecks.length > 0 ||
+    (pod.status?.errors && pod.status.errors > 0);
   const status = unhealthy ? "unhealthy" : busy ? "busy" : "idle";
   return (
     <div className={"pod " + pod.name + " " + status + " " + pod.phase}>
-      <div title={pod.name}>
+      <div title={pod.name} onClick={handleClickPod}>
         <span className="dot" />
       </div>
       <div title={pod.status?.version}>{uptime}</div>
@@ -51,7 +59,8 @@ function PodStatusView({ pod }: { pod: PodStatus<BwStatus> }) {
       </div>
       {pod.status?.healthChecks && (
         <div title={JSON.stringify(unhealthyHealthChecks, undefined, "  ")}>
-          {Object.keys(healthChecks).length - unhealthyHealthChecks.length} / {Object.keys(healthChecks).length}
+          {Object.keys(healthChecks).length - unhealthyHealthChecks.length} /{" "}
+          {Object.keys(healthChecks).length}
         </div>
       )}
     </div>
@@ -82,6 +91,44 @@ function AppStatusView({
   );
 }
 
+function NamespaceStatusView({
+  namespace,
+  namespaceTree,
+}: {
+  namespace: string;
+  namespaceTree: Record<string, Record<string, PodStatus<BwStatus>>>;
+}) {
+  function handleClick() {
+    console.table(
+      Object.values(namespaceTree).flatMap((o) => Object.values(o))
+    );
+    console.table(
+      Object.values(namespaceTree).flatMap((o) =>
+        Object.values(o).map((o) => o.status)
+      )
+    );
+    console.table(
+      Object.values(namespaceTree).flatMap((o) =>
+        Object.values(o).map((o) =>
+          Object.values(o.status?.errorMessages || {})
+        )
+      )
+    );
+  }
+  return (
+    <div className={"namespace " + namespace}>
+      <h2 onClick={handleClick}>{namespace}</h2>
+      <div className="apps">
+        {Object.keys(namespaceTree)
+          .sort()
+          .map((app) => (
+            <AppStatusView key={app} app={app} appTree={namespaceTree[app]} />
+          ))}
+      </div>
+    </div>
+  );
+}
+
 export function ClusterStatusTree({
   cluster,
   lastStatus,
@@ -101,20 +148,11 @@ export function ClusterStatusTree({
         {Object.keys(tree)
           .sort()
           .map((ns) => (
-            <div className={"namespace " + ns} key={ns}>
-              <h2>{ns}</h2>
-              <div className="apps">
-                {Object.keys(tree[ns])
-                  .sort()
-                  .map((app) => (
-                    <AppStatusView
-                      key={app}
-                      app={app}
-                      appTree={tree[ns][app]}
-                    />
-                  ))}
-              </div>
-            </div>
+            <NamespaceStatusView
+              namespace={ns}
+              key={ns}
+              namespaceTree={tree[ns]}
+            />
           ))}
       </div>
     </div>
