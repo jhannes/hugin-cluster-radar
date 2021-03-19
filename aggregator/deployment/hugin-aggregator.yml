@@ -20,7 +20,7 @@ spec:
       serviceAccount: hugin-aggregator
       containers:
         - name: hugin-aggregator
-          image: hugin-aggregator
+          image: jhannes/hugin-aggregator
           ports:
             - containerPort: 3003
       imagePullSecrets:
