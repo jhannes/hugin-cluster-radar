@@ -30,14 +30,10 @@ function useUptime(startTime: Date) {
 function PodStatusView({ pod }: { pod: PodStatus<BwStatus> }) {
   const uptime = useUptime(new Date(pod.startTime));
   const healthChecks = pod.status?.healthChecks || {};
-  const healthyHealthChecks = Object.values(healthChecks).filter(
-    (h) => h.healthy
-  ).length;
+  const unhealthyHealthChecks = Object.values(healthChecks).filter((h) => !h.healthy);
   const traffic = pod.status?.traffic || 0;
   const busy = traffic > 100;
-  const unhealthy =
-    healthyHealthChecks < Object.keys(healthChecks).length ||
-    (pod.status?.errors && pod.status.errors > 0);
+  const unhealthy = unhealthyHealthChecks.length > 0 || (pod.status?.errors && pod.status.errors > 0);
   const status = unhealthy ? "unhealthy" : busy ? "busy" : "idle";
   return (
     <div className={"pod " + pod.name + " " + status + " " + pod.phase}>
@@ -54,8 +50,8 @@ function PodStatusView({ pod }: { pod: PodStatus<BwStatus> }) {
         {pod.status?.errors}
       </div>
       {pod.status?.healthChecks && (
-        <div title={JSON.stringify(healthChecks, undefined, "  ")}>
-          {healthyHealthChecks} / {Object.keys(healthChecks).length}
+        <div title={JSON.stringify(unhealthyHealthChecks, undefined, "  ")}>
+          {Object.keys(healthChecks).length - unhealthyHealthChecks.length} / {Object.keys(healthChecks).length}
         </div>
       )}
     </div>

@@ -68,6 +68,7 @@ h1, h2, h3 {
     width: 1em;
     background-color: grey;
     border-radius: 50%;
+    border: 1px solid white;
     display: inline-block;
     margin: 0.2em;
 }
