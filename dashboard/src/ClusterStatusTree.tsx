@@ -2,7 +2,11 @@ import { BwStatus, PodStatus, PodStatusTree } from "./model.ts";
 import React from "react";
 import { useRelativeTime } from "./useRelativeTime.ts";
 
-function useUptime(startTime: Date) {
+function useUptime(time?: Date) {
+  if (!time) {
+    return undefined;
+  }
+
   function period(seconds: number) {
     let secs = seconds;
     const weeks = Math.floor(secs / (7 * 24 * 60 * 60));
@@ -17,7 +21,7 @@ function useUptime(startTime: Date) {
   }
 
   const { weeks, days, hours, mins } = period(
-    (new Date().getTime() - startTime.getTime()) / 1000
+    (new Date().getTime() - time.getTime()) / 1000
   );
   let result = "";
   if (weeks) result += weeks + "w";
@@ -32,7 +36,9 @@ function PodStatusView({ pod }: { pod: PodStatus<BwStatus> }) {
     console.log(pod);
   }
 
-  const uptime = useUptime(new Date(pod.startTime));
+  const { name, phase, startTime, lastError, lastContact } = pod;
+
+  const uptime = useUptime(startTime ? new Date(startTime) : undefined);
   const healthChecks = pod.status?.healthChecks || {};
   const unhealthyHealthChecks = Object.values(healthChecks).filter(
     (h) => !h.healthy
@@ -42,21 +48,36 @@ function PodStatusView({ pod }: { pod: PodStatus<BwStatus> }) {
   const unhealthy =
     unhealthyHealthChecks.length > 0 ||
     (pod.status?.errors && pod.status.errors > 0);
-  const status = unhealthy ? "unhealthy" : busy ? "busy" : "idle";
+  let status: string;
+  if (!lastContact) {
+    status = "down";
+  } else if (lastError && new Date(lastError) > new Date(lastContact)) {
+    status = "down";
+  } else if (unhealthy) {
+    status = "unhealthy";
+  } else if (busy) {
+    status = "busy";
+  } else {
+    status = "idle";
+  }
   return (
-    <div className={"pod " + pod.name + " " + status + " " + pod.phase}>
-      <div title={pod.name} onClick={handleClickPod}>
+    <div className={"pod " + name + " " + status + " " + phase}>
+      <div title={name} onClick={handleClickPod}>
         <span className="dot" />
       </div>
       <div title={pod.status?.version}>{uptime}</div>
-      <div>
-        {traffic}
-        {traffic == 0 ? "⚠" : ""}
-      </div>
-      <div>
-        {pod.status?.errors}
-        {pod.status?.errors ? "⚠" : ""}
-      </div>
+      {pod.status && (
+        <div>
+          {pod.status.traffic}
+          {pod.status.traffic == 0 ? "⚠" : ""}
+        </div>
+      )}
+      {pod.status && (
+        <div>
+          {pod.status?.errors}
+          {pod.status?.errors ? "⚠" : ""}
+        </div>
+      )}
       {pod.status?.healthChecks && (
         <div title={JSON.stringify(unhealthyHealthChecks, undefined, "  ")}>
           {Object.keys(healthChecks).length - unhealthyHealthChecks.length} /{" "}
@@ -132,19 +153,33 @@ function NamespaceStatusView({
 
 export function ClusterStatusTree({
   cluster,
-  lastStatus,
+  startTime,
+  connected,
+  disconnectTime,
   tree,
 }: {
   cluster: string;
-  lastStatus: Date;
+  startTime?: Date;
+  connected: boolean;
+  disconnectTime?: Date;
   tree: PodStatusTree<BwStatus>;
 }) {
-  const lastUpdate = useRelativeTime(lastStatus);
+  const startTimeAgo = useRelativeTime(startTime);
+  const disconnectedTimeAgo = useRelativeTime(disconnectTime);
+  const status = connected && startTime
+    ? new Date().getTime() - startTime.getTime() < 60000
+      ? "starting"
+      : "healthy"
+    : "down";
 
   return (
-    <div className={"cluster " + cluster}>
-      <h1>{cluster}</h1>
-      <div>Last update: {lastUpdate}</div>
+    <div className={"cluster " + cluster + (!connected ? " disconnected" : "")}>
+      <h1 className={status}>
+        <div className="dot" />
+        {cluster}
+      </h1>
+      {connected && <div>Aggregator started {startTimeAgo}</div>}
+      {disconnectedTimeAgo && <div>Last seen {disconnectedTimeAgo}</div>}
       <div className="namespaces">
         {Object.keys(tree)
           .sort()

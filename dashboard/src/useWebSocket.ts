@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 
 export function useWebSocket(callback: (data: string) => void, url: string) {
+  const [connectTime, setConnectTime] = useState<Date | undefined>();
+  const [disconnectTime, setDisconnectTime] = useState<Date | undefined>();
+  const connected = useRef(false);
   const savedCallback = useRef();
   useEffect(() => {
     savedCallback.current = callback;
@@ -10,9 +13,19 @@ export function useWebSocket(callback: (data: string) => void, url: string) {
 
   function connect() {
     console.log("Attempting reconnect");
+    connected.current = false;
     const ws = new WebSocket(url);
-    ws.onopen = () => console.log("ws open");
+    ws.onopen = () => {
+      connected.current = true;
+      setConnectTime(new Date());
+      setDisconnectTime(undefined);
+    };
     ws.onclose = () => {
+      if (connected.current) {
+        setDisconnectTime(new Date());
+      }
+      connected.current = false;
+      setConnectTime(undefined);
       setTimeout(connect, 5000);
     };
     ws.onmessage = (e: MessageEvent) => {
@@ -29,4 +42,5 @@ export function useWebSocket(callback: (data: string) => void, url: string) {
       }
     };
   }, [url]);
+  return { connectTime, disconnectTime, connected: connected.current };
 }

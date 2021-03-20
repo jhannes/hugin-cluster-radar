@@ -10,8 +10,9 @@ export interface PodStatus<T> {
   app: string;
   namespace: string;
   phase: PodPhase;
-  startTime: Date;
-  lastContact: Date;
+  startTime?: Date;
+  lastContact?: Date;
+  lastError?: Date;
   statusFunction?: () => Promise<T>;
   status?: T;
 }

@@ -1,14 +1,21 @@
-import React, { useMemo } from "react";
+import React from "react";
 import ReactDOM from "react-dom";
 import { BwStatus } from "./model.ts";
 import { useClusterStatusTree } from "./useClusterStatusTree.ts";
 import { ClusterStatusTree } from "./ClusterStatusTree.tsx";
 
 function ClusterStatus({ url, cluster }: { url: string; cluster: string }) {
-  const tree = useClusterStatusTree<BwStatus>(url);
-  const lastStatus = useMemo(() => new Date(), [tree]);
+  const { tree, startTime, connectTime, connected, disconnectTime } = useClusterStatusTree<BwStatus>(
+    url
+  );
   return (
-    <ClusterStatusTree cluster={cluster} tree={tree} lastStatus={lastStatus} />
+    <ClusterStatusTree
+      cluster={cluster}
+      tree={tree}
+      startTime={startTime || connectTime}
+      connected={connected}
+      disconnectTime={disconnectTime}
+    />
   );
 }
 
