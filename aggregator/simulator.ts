@@ -2,6 +2,7 @@ import { ALL_POD_PHASES } from "./src/model.ts";
 import { PodStatusRepository } from "./src/PodStatusRepository.ts";
 import { Random } from "./lib/Random.ts";
 import { StatusServer } from "./src/StatusServer.ts";
+import { pollConfiguredServers } from "./src/pollConfiguredServers.ts";
 
 const repository = new PodStatusRepository<unknown>();
 
@@ -44,6 +45,7 @@ function generateEvent() {
       name: app + "-" + random.randomChars(4) + "-" + random.randomChars(4),
       phase: "Pending",
       startTime: random.randomPastDateTime(),
+      lastAttempt: new Date(),
       lastContact: new Date(),
       statusFunction: statusFunction(),
     });
@@ -59,11 +61,12 @@ function generateEvent() {
       ...app,
     });
   }
-  console.log("generating event", action);
-  console.log(repository.pods);
+  console.debug("TRACE: generating event", action);
 }
 
-setInterval(generateEvent, 10000);
-generateEvent();
+//setInterval(generateEvent, 10000);
+//generateEvent();
 
 new StatusServer(3004, repository);
+
+await pollConfiguredServers("./config/endpoints.json", repository);

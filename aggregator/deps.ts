@@ -1,4 +1,7 @@
 export { serve } from "https://deno.land/std/http/server.ts";
+export { exists } from "https://deno.land/std@0.90.0/fs/mod.ts";
+export { readJson } from 'https://deno.land/x/jsonfile/mod.ts';
+
 export type {
   Server,
   ServerRequest,
@@ -10,10 +13,7 @@ export {
 } from "https://deno.land/std/ws/mod.ts";
 export type { WebSocket } from "https://deno.land/std/ws/mod.ts";
 
-export {
-  autoDetectClient,
-  KubeConfigRestClient,
-} from "https://deno.land/x/kubernetes_client/mod.ts";
+export { autoDetectClient } from "https://deno.land/x/kubernetes_client/mod.ts";
 export { Reflector } from "https://deno.land/x/kubernetes_client/mod.ts";
 export type { RestClient } from "https://deno.land/x/kubernetes_client/mod.ts";
 export type { Pod } from "https://deno.land/x/kubernetes_apis/builtin/core@v1/mod.ts";

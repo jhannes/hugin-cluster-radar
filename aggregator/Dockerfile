@@ -5,9 +5,9 @@ EXPOSE 1993
 WORKDIR /app
 
 COPY deps.ts /app
-RUN deno cache deps.ts
+RUN deno cache --unstable deps.ts
 
 ADD . /app
-RUN deno cache main.ts
+RUN deno cache --unstable main.ts
 
-CMD ["run", "--allow-net", "--allow-read", "--cert=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt", "main.ts"]
+CMD ["run", "--allow-net", "--allow-read", "--unstable", "--cert=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt", "main.ts"]

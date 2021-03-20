@@ -3,6 +3,7 @@ import { PodPhase } from "./model.ts";
 import { Pod } from "../deps.ts";
 import { CoreV1Api, Reflector } from "../deps.ts";
 import type { RestClient } from "../deps.ts";
+import { fetchJson } from "./fetchJson.ts";
 
 export async function watchPods<T>(
   kubernetes: RestClient,
@@ -34,29 +35,22 @@ export async function watchPods<T>(
           const statusUrl = podIP
             ? "http://" + podIP + ":" + port + "/check"
             : undefined;
+          const statusFunction: () => Promise<T|undefined> = statusUrl ?
+            () => fetchJson(statusUrl) : async () => {};
           repository.onEvent(type, {
             namespace: namespace || "<no namespace>",
             app: labels!["hugin"] || "<no app>",
             name: name || "<no name>",
             phase: phase as PodPhase,
             startTime: startTime || new Date(),
+            lastAttempt: new Date(),
             lastContact: new Date(),
             status: undefined,
-            async statusFunction() {
-              try {
-                // @ts-ignore
-                const status = await fetch(statusUrl);
-                console.log("fetched", statusUrl, status.status);
-                return await status.json();
-              } catch (e) {
-                console.error("While fetching " + statusUrl, e);
-                throw e;
-              }
-            },
+            statusFunction,
           });
         }
       } else {
-        console.log("event", { type, pod });
+        console.info("INFO: unhandled event", { type, pod });
       }
     }
   });

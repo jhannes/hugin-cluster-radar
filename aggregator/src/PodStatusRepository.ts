@@ -3,44 +3,56 @@ import { PodStatus } from "./model.ts";
 export type PodRepositoryEvent<T> =
   | {
       type: "snapshot";
-      snapshot: Record<string, PodStatus<T>>;
+      snapshot: Record<string, PodStatus<T|undefined>>;
     }
   | {
       type: "patch";
       name: string;
-      value: PodStatus<T>;
+      value: PodStatus<T|undefined>;
     };
 
 export class PodStatusRepository<T> {
-  readonly pods: Record<string, PodStatus<T> & { timer: number }> = {};
+  readonly pods: Record<string, PodStatus<T|undefined> & { timer: number }> = {};
   readonly listeners: ((event: PodRepositoryEvent<T>) => void)[] = [];
 
-  onEvent(event: "ADDED" | "MODIFIED" | "DELETED", data: PodStatus<T>) {
+  async updateStatus(name: string, statusFunction: () => Promise<T|undefined>) {
+    const pod = this.pods[name];
+    if (pod) {
+      try {
+        pod.lastAttempt = new Date();
+        const json: any = await statusFunction();
+        pod.status = json;
+        pod.lastContact = new Date();
+        if (json.startTime) {
+          pod.startTime = json.startTime;
+        }
+        if (json.id) {
+          pod.name = json.id;
+        }
+        this.notifyListeners({ type: "patch", name, value: { ...pod } });
+      } catch (e) {
+        console.warn("WARN: Failed to get status from", name, e);
+        pod.lastError = new Date();
+      }
+    }
+  }
+
+  onEvent(event: "ADDED" | "MODIFIED" | "DELETED", data: PodStatus<T|undefined>) {
     if (event === "DELETED") {
       if (this.pods[data.name]) {
+        console.info("INFO: Pod removed " + data.name);
         clearInterval(this.pods[data.name].timer);
         delete this.pods[data.name];
       }
     } else if (event === "ADDED") {
+      const { name, statusFunction } = data;
+      console.info("INFO: Pod added " + name);
       const timer = setInterval(
-        () =>
-          (async () => {
-            if (this.pods[data.name]) {
-              try {
-                this.pods[data.name].status = await data.statusFunction!();
-                this.notifyListeners({
-                  type: "patch",
-                  name: data.name,
-                  value: { ...this.pods[data.name] },
-                });
-              } catch (e) {
-                console.warn("Failed to get status from", data.name, e);
-              }
-            }
-          })(),
+        () => (async () => await this.updateStatus(name, statusFunction))(),
         15000
       );
-      this.pods[data.name] = { ...data, timer };
+      this.pods[name] = { ...data, timer };
+      this.updateStatus(name, statusFunction);
     } else if (this.pods[data.name]) {
       this.pods[data.name].phase = data.phase;
     }
@@ -56,7 +68,7 @@ export class PodStatusRepository<T> {
       try {
         listener(event);
       } catch (e) {
-        console.warn("Failed to notify listener", e);
+        console.error("ERROR: Failed to notify listener", e);
       }
     });
   }

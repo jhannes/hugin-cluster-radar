@@ -21,10 +21,17 @@ spec:
       containers:
         - name: hugin-aggregator
           image: jhannes/hugin-aggregator
+          volumeMounts:
+            - name: hugin-aggregator-config
+              mountPath: /app/config
           ports:
             - containerPort: 3003
       imagePullSecrets:
         - name: deploy-secret
+      volumes:
+        - name: hugin-aggregator-config
+          configMap:
+            name: hugin-aggregator-config
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -77,4 +84,11 @@ spec:
     - name: http
       protocol: TCP
       port: 3003
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  namespace: default
+  name: hugin-aggregator-config
+data:
 ---

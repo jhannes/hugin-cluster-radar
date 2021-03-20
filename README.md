@@ -32,6 +32,8 @@ If you don't want to deploy the aggregator in a cluster, it comes with a simulat
 
 1. `cd aggregator`
 2. `vr run redeploy`
+3. `vr run port-forward` to make the service accessible
+4. Go to http://localhost:3003 to access the aggregator
 
 **NB: This assumes Docker registry running on localhost:5000**
 

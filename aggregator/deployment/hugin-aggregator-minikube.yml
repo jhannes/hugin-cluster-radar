@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: kube-system
+  namespace: default
   name: hugin-aggregator
   labels:
     app: hugin-aggregator
@@ -18,16 +18,23 @@ spec:
     spec:
       containers:
         - name: hugin-aggregator
-          image: jhannes/hugin-aggregator
+          image: localhost:5000/hugin-aggregator
           imagePullPolicy: Always
+          volumeMounts:
+            - name: hugin-aggregator-config
+              mountPath: /app/config
           ports:
             - containerPort: 3003
+      volumes:
+        - name: hugin-aggregator-config
+          configMap:
+            name: hugin-aggregator-config
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: hugin-aggregator
-  namespace: kube-system
+  namespace: default
 spec:
   type: LoadBalancer
   selector:
@@ -37,4 +44,10 @@ spec:
     - name: http
       protocol: TCP
       port: 3003
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: hugin-aggregator-config
+data:
 ---

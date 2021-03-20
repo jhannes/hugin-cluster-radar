@@ -1,6 +1,6 @@
 scripts:
   start:
-    deno run --allow-net=:3004 --allow-run --allow-env simulator.ts
+    deno run --unstable --allow-read=config --allow-net --allow-run --allow-env simulator.ts
   build:
     docker build -t hugin-aggregator .
   tag:
@@ -10,12 +10,14 @@ scripts:
     - vr run tag
     - docker push localhost:5000/hugin-aggregator
   apply:
-    kubectl apply -f deployment/hugin-aggregator.yml
+    kubectl apply -f deployment/hugin-aggregator-minikube.yml
   restart:
-    kubectl rollout restart --namespace=kube-system deployment/hugin-aggregator
+    kubectl rollout restart --namespace=default deployment/hugin-aggregator
   redeploy:
     - vr run push
     - vr run apply
     - vr run restart
+  logs:
+    kubectl logs --follow --namespace=default deployment/hugin-aggregator
   port-forward:
-    kubectl port-forward service/hugin-aggregator http
+    kubectl port-forward --namespace=default service/hugin-aggregator http

@@ -13,6 +13,7 @@ import {
 } from "./PodStatusRepository.ts";
 
 export class StatusServer<T> {
+  private readonly startTime = new Date();
   private readonly sockets: Record<string, WebSocket> = {};
   private readonly server: Server;
 
@@ -36,30 +37,43 @@ export class StatusServer<T> {
   }
 
   async handleRequest(request: ServerRequest) {
-    console.log(request.url);
-    if (request.url === "/hello") {
-      request.respond({ body: "Hello from your Deno" });
+    if (request.url === "/") {
+      const status = Object.values(this.repository.pods).map(
+        ({ namespace, app, name, lastAttempt, lastContact, lastError }) => ({
+          namespace,
+          app,
+          name,
+          lastContact,
+          lastAttempt,
+          lastError,
+        })
+      );
+      const body = JSON.stringify({ status, startTime: this.startTime });
+      request.respond({
+        body,
+        headers: new Headers({ "Content-type": "application/json" }),
+      });
     } else if (request.url === "/pods") {
       request.respond({
         body: JSON.stringify(this.repository.pods),
         headers: new Headers({ "Content-type": "application/json" }),
       });
     } else if (request.url.startsWith("/ws")) {
-      console.log("Connect web socket");
+      console.info("INFO: Connect web socket");
       const { conn, r: bufReader, w: bufWriter, headers } = request;
       const socketRequest = { conn, bufReader, bufWriter, headers };
       this.websocketLoop(await acceptWebSocket(socketRequest));
     } else {
-      console.log("Not found", request.url);
+      console.warn("WARN: Not found", request.url);
       request.respond({ status: 404 });
     }
   }
 
   async broadCast(message: string) {
     for (const socket of Object.keys(this.sockets)) {
-      console.log("sending to", socket);
+      console.debug("DEBUG: sending to", socket);
       if (this.sockets[socket].isClosed) {
-        console.warn("socket was closed without being removed!", socket);
+        console.warn("WARN: socket was closed without being removed!", socket);
         continue;
       }
       try {
@@ -74,17 +88,21 @@ export class StatusServer<T> {
     const id = v4.generate();
     this.sockets[id] = socket;
     socket.send(
-      JSON.stringify({ type: "snapshot", snapshot: this.repository.pods })
+      JSON.stringify({
+        type: "snapshot",
+        snapshot: this.repository.pods,
+        startTime: this.startTime,
+      })
     );
 
     for await (const event of socket) {
       if (isWebSocketCloseEvent(event)) {
-        console.log("Disconnected", id);
+        console.info("INFO: Disconnected", id);
         delete this.sockets[id];
       } else if (typeof event === "string") {
-        console.log("From socket", id, event);
+        console.info("INFO: From socket", id, event);
       } else {
-        console.log("Unused event", event);
+        console.warn("WARN: Unused event", event);
       }
     }
   }
