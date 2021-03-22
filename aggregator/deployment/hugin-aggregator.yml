@@ -2,7 +2,6 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: default
   name: hugin-aggregator
   labels:
     app: hugin-aggregator
@@ -37,7 +36,6 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: hugin-aggregator
-  namespace: default
   labels:
     app: hugin-aggregator
 ---
@@ -48,7 +46,6 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: hugin-aggregator
-    namespace: default
 roleRef:
   kind: ClusterRole
   name: hugin-aggregator
@@ -74,7 +71,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: hugin-aggregator
-  namespace: default
 spec:
   type: LoadBalancer
   selector:
@@ -84,11 +80,4 @@ spec:
     - name: http
       protocol: TCP
       port: 3003
----
-kind: ConfigMap
-apiVersion: v1
-metadata:
-  namespace: default
-  name: hugin-aggregator-config
-data:
 ---
