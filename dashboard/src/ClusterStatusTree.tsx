@@ -76,13 +76,16 @@ function PodStatusView({ pod }: { pod: PodStatus<BwStatus> }) {
         <div>
           {pod.status?.errors}
           {pod.status?.errors ? "⚠" : ""}
-        </div>
-      )}
-      {pod.status?.healthChecks && (
-        <div title={JSON.stringify(unhealthyHealthChecks, undefined, "  ")}>
-          {Object.keys(healthChecks).length - unhealthyHealthChecks.length} /{" "}
-          {Object.keys(healthChecks).length}
-          {unhealthyHealthChecks.length > 0 ? "⚠" : ""}
+          {pod.status?.healthChecks && (
+            <span
+              title={JSON.stringify(unhealthyHealthChecks, undefined, "  ")}
+            >
+              {" | "}
+              {Object.keys(healthChecks).length - unhealthyHealthChecks.length}/
+              {Object.keys(healthChecks).length}
+              {unhealthyHealthChecks.length > 0 ? "⚠" : ""}
+            </span>
+          )}
         </div>
       )}
     </div>
@@ -166,11 +169,12 @@ export function ClusterStatusTree({
 }) {
   const startTimeAgo = useRelativeTime(startTime);
   const disconnectedTimeAgo = useRelativeTime(disconnectTime);
-  const status = connected && startTime
-    ? new Date().getTime() - startTime.getTime() < 60000
-      ? "starting"
-      : "healthy"
-    : "down";
+  const status =
+    connected && startTime
+      ? new Date().getTime() - startTime.getTime() < 60000
+        ? "starting"
+        : "healthy"
+      : "down";
 
   return (
     <div className={"cluster " + cluster + (!connected ? " disconnected" : "")}>
