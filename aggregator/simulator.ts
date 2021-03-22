@@ -61,7 +61,7 @@ function generateEvent() {
       ...app,
     });
   }
-  console.debug("TRACE: generating event", action);
+  console.debug(new Date().toISOString() + " TRACE: generating event", action);
 }
 
 //setInterval(generateEvent, 10000);

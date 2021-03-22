@@ -59,21 +59,24 @@ export class StatusServer<T> {
         headers: new Headers({ "Content-type": "application/json" }),
       });
     } else if (request.url.startsWith("/ws")) {
-      console.info("INFO: Connect web socket");
+      console.info(new Date().toISOString() + " INFO: Connect web socket");
       const { conn, r: bufReader, w: bufWriter, headers } = request;
       const socketRequest = { conn, bufReader, bufWriter, headers };
       this.websocketLoop(await acceptWebSocket(socketRequest));
     } else {
-      console.warn("WARN: Not found", request.url);
+      console.warn(new Date().toISOString() + " WARN: Not found", request.url);
       request.respond({ status: 404 });
     }
   }
 
   async broadCast(message: string) {
     for (const socket of Object.keys(this.sockets)) {
-      console.debug("DEBUG: sending to", socket);
+      console.debug(new Date().toISOString() + " DEBUG: sending to", socket);
       if (this.sockets[socket].isClosed) {
-        console.warn("WARN: socket was closed without being removed!", socket);
+        console.warn(
+          new Date() + "WARN: socket was closed without being removed!",
+          socket
+        );
         continue;
       }
       try {
@@ -97,12 +100,16 @@ export class StatusServer<T> {
 
     for await (const event of socket) {
       if (isWebSocketCloseEvent(event)) {
-        console.info("INFO: Disconnected", id);
+        console.info(new Date().toISOString() + " INFO: Disconnected", id);
         delete this.sockets[id];
       } else if (typeof event === "string") {
-        console.info("INFO: From socket", id, event);
+        console.info(
+          new Date().toISOString() + " INFO: From socket",
+          id,
+          event
+        );
       } else {
-        console.warn("WARN: Unused event", event);
+        console.warn(new Date().toISOString() + " WARN: Unused event", event);
       }
     }
   }

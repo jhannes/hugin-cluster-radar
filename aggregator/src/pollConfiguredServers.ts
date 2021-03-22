@@ -12,7 +12,10 @@ export async function pollConfiguredServers(
       namespace: string;
       apps: Record<string, string[]>;
     }> = json;
-    console.info("INFO: Endpoints :", JSON.stringify(endpoints));
+    console.info(
+      new Date().toISOString() + " INFO: Endpoints :",
+      JSON.stringify(endpoints)
+    );
     for (const { namespace, apps } of endpoints) {
       for (const app of Object.keys(apps)) {
         const pods = apps[app!];
@@ -28,6 +31,8 @@ export async function pollConfiguredServers(
       }
     }
   } else {
-    console.warn(`WARN: ${configurationFile} doesn't exist`);
+    console.warn(
+      `${new Date().toISOString()} WARN: ${configurationFile} doesn't exist`
+    );
   }
 }

@@ -35,8 +35,9 @@ export async function watchPods<T>(
           const statusUrl = podIP
             ? "http://" + podIP + ":" + port + "/check"
             : undefined;
-          const statusFunction: () => Promise<T|undefined> = statusUrl ?
-            () => fetchJson(statusUrl) : async () => {};
+          const statusFunction: () => Promise<T | undefined> = statusUrl
+            ? () => fetchJson(statusUrl)
+            : async () => {};
           repository.onEvent(type, {
             namespace: namespace || "<no namespace>",
             app: labels!["hugin"] || "<no app>",
@@ -50,7 +51,10 @@ export async function watchPods<T>(
           });
         }
       } else {
-        console.info("INFO: unhandled event", { type, pod });
+        console.info(new Date().toISOString() + " INFO: unhandled event", {
+          type,
+          pod,
+        });
       }
     }
   });
