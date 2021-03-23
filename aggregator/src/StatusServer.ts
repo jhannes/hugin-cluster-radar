@@ -74,7 +74,8 @@ export class StatusServer<T> {
       console.debug(new Date().toISOString() + " DEBUG: sending to", socket);
       if (this.sockets[socket].isClosed) {
         console.warn(
-          new Date() + "WARN: socket was closed without being removed!",
+          new Date().toISOString() +
+            " WARN: socket was closed without being removed!",
           socket
         );
         continue;
