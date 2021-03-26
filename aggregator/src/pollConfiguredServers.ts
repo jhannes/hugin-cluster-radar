@@ -1,10 +1,10 @@
 import { PodStatusRepository } from "./PodStatusRepository.ts";
-import { exists, readJson } from "../deps.ts";
+import { exists, log, readJson } from "../deps.ts";
 import { fetchJson } from "./fetchJson.ts";
 
 export async function pollConfiguredServers(
   configurationFile: string,
-  repository: PodStatusRepository<unknown>
+  repository: PodStatusRepository<unknown>,
 ) {
   if (await exists(configurationFile)) {
     const json: any = await readJson(configurationFile);
@@ -12,10 +12,7 @@ export async function pollConfiguredServers(
       namespace: string;
       apps: Record<string, string[]>;
     }> = json;
-    console.info(
-      new Date().toISOString() + " INFO: Endpoints :",
-      JSON.stringify(endpoints)
-    );
+    log.info("Endpoints :", JSON.stringify(endpoints));
     for (const { namespace, apps } of endpoints) {
       for (const app of Object.keys(apps)) {
         const pods = apps[app!];
@@ -31,8 +28,6 @@ export async function pollConfiguredServers(
       }
     }
   } else {
-    console.warn(
-      `${new Date().toISOString()} WARN: ${configurationFile} doesn't exist`
-    );
+    log.warning(`${configurationFile} doesn't exist`);
   }
 }

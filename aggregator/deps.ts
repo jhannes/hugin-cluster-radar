@@ -1,6 +1,8 @@
 export { serve } from "https://deno.land/std/http/server.ts";
-export { exists } from "https://deno.land/std@0.90.0/fs/mod.ts";
-export { readJson } from 'https://deno.land/x/jsonfile/mod.ts';
+export { exists } from "https://deno.land/std/fs/mod.ts";
+import * as log from "https://deno.land/std/log/mod.ts";
+export { log };
+export { readJson } from "https://deno.land/x/jsonfile/mod.ts";
 
 export type {
   Server,

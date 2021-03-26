@@ -1,15 +1,16 @@
 import { PodStatus } from "./model.ts";
+import { log } from "../deps.ts";
 
 export type PodRepositoryEvent<T> =
   | {
-      type: "snapshot";
-      snapshot: Record<string, PodStatus<T | undefined>>;
-    }
+    type: "snapshot";
+    snapshot: Record<string, PodStatus<T | undefined>>;
+  }
   | {
-      type: "patch";
-      name: string;
-      value: PodStatus<T | undefined>;
-    };
+    type: "patch";
+    name: string;
+    value: PodStatus<T | undefined>;
+  };
 
 export class PodStatusRepository<T> {
   readonly pods: Record<
@@ -20,7 +21,7 @@ export class PodStatusRepository<T> {
 
   async updateStatus(
     name: string,
-    statusFunction: () => Promise<T | undefined>
+    statusFunction: () => Promise<T | undefined>,
   ) {
     const pod = this.pods[name];
     if (pod) {
@@ -37,11 +38,7 @@ export class PodStatusRepository<T> {
         }
         this.notifyListeners({ type: "patch", name, value: { ...pod } });
       } catch (e) {
-        console.warn(
-          new Date().toISOString() + " WARN: Failed to get status from",
-          name,
-          e
-        );
+        log.warning("Failed to get status from", name, e);
         pod.lastError = new Date();
       }
     }
@@ -49,22 +46,20 @@ export class PodStatusRepository<T> {
 
   onEvent(
     event: "ADDED" | "MODIFIED" | "DELETED",
-    data: PodStatus<T | undefined>
+    data: PodStatus<T | undefined>,
   ) {
     if (event === "DELETED") {
       if (this.pods[data.name]) {
-        console.info(
-          new Date().toISOString() + " INFO: Pod removed " + data.name
-        );
+        log.info("Pod removed " + data.name);
         clearInterval(this.pods[data.name].timer);
         delete this.pods[data.name];
       }
     } else if (event === "ADDED") {
       const { name, statusFunction } = data;
-      console.info(new Date().toISOString() + " INFO: Pod added " + name);
+      log.info("Pod added " + name);
       const timer = setInterval(
         () => (async () => await this.updateStatus(name, statusFunction))(),
-        15000
+        15000,
       );
       this.pods[name] = { ...data, timer };
       this.updateStatus(name, statusFunction);
@@ -83,10 +78,7 @@ export class PodStatusRepository<T> {
       try {
         listener(event);
       } catch (e) {
-        console.error(
-          new Date().toISOString() + " ERROR: Failed to notify listener",
-          e
-        );
+        log.error("Failed to notify listener", e);
       }
     });
   }

@@ -1,20 +1,20 @@
 import { PodStatusRepository } from "./PodStatusRepository.ts";
 import { PodPhase } from "./model.ts";
-import { Pod } from "../deps.ts";
+import { log, Pod } from "../deps.ts";
 import { CoreV1Api, Reflector } from "../deps.ts";
 import type { RestClient } from "../deps.ts";
 import { fetchJson } from "./fetchJson.ts";
 
 export async function watchPods<T>(
   kubernetes: RestClient,
-  repository: PodStatusRepository<T>
+  repository: PodStatusRepository<T>,
 ) {
   const coreApi = new CoreV1Api(kubernetes);
   const opts = { labelSelector: "hugin" };
 
   const reflector = new Reflector(
     () => coreApi.getPodListForAllNamespaces(opts),
-    () => coreApi.watchPodListForAllNamespaces(opts)
+    () => coreApi.watchPodListForAllNamespaces(opts),
   );
   reflector.goObserveAll(async (iter) => {
     for await (const event of iter) {
@@ -51,10 +51,7 @@ export async function watchPods<T>(
           });
         }
       } else {
-        console.info(new Date().toISOString() + " INFO: unhandled event", {
-          type,
-          pod,
-        });
+        log.info("unhandled event", { type, pod });
       }
     }
   });

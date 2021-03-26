@@ -1,12 +1,15 @@
 import {
+  acceptWebSocket,
+  isWebSocketCloseEvent,
   serve,
   Server,
   ServerRequest,
   v4,
-  acceptWebSocket,
-  isWebSocketCloseEvent,
   WebSocket,
 } from "../deps.ts";
+
+import { log } from "../deps.ts";
+
 import {
   PodRepositoryEvent,
   PodStatusRepository,
@@ -30,7 +33,7 @@ export class StatusServer<T> {
       try {
         await this.handleRequest(request);
       } catch (e) {
-        console.error(e);
+        log.error(e);
         request.respond({ status: 500 });
       }
     }
@@ -46,7 +49,7 @@ export class StatusServer<T> {
           lastContact,
           lastAttempt,
           lastError,
-        })
+        }),
       );
       const body = JSON.stringify({ status, startTime: this.startTime });
       request.respond({
@@ -59,31 +62,27 @@ export class StatusServer<T> {
         headers: new Headers({ "Content-type": "application/json" }),
       });
     } else if (request.url.startsWith("/ws")) {
-      console.info(new Date().toISOString() + " INFO: Connect web socket");
+      log.info("Connect web socket");
       const { conn, r: bufReader, w: bufWriter, headers } = request;
       const socketRequest = { conn, bufReader, bufWriter, headers };
       this.websocketLoop(await acceptWebSocket(socketRequest));
     } else {
-      console.warn(new Date().toISOString() + " WARN: Not found", request.url);
+      log.warning("Not found", request.url);
       request.respond({ status: 404 });
     }
   }
 
   async broadCast(message: string) {
     for (const socket of Object.keys(this.sockets)) {
-      console.debug(new Date().toISOString() + " DEBUG: sending to", socket);
+      log.debug("sending to", socket);
       if (this.sockets[socket].isClosed) {
-        console.warn(
-          new Date().toISOString() +
-            " WARN: socket was closed without being removed!",
-          socket
-        );
+        log.warning("socket was closed without being removed!", socket);
         continue;
       }
       try {
         await this.sockets[socket].send(message);
       } catch (e) {
-        console.warn(e);
+        log.warning(e);
       }
     }
   }
@@ -96,21 +95,17 @@ export class StatusServer<T> {
         type: "snapshot",
         snapshot: this.repository.pods,
         startTime: this.startTime,
-      })
+      }),
     );
 
     for await (const event of socket) {
       if (isWebSocketCloseEvent(event)) {
-        console.info(new Date().toISOString() + " INFO: Disconnected", id);
+        log.info("Disconnected", id);
         delete this.sockets[id];
       } else if (typeof event === "string") {
-        console.info(
-          new Date().toISOString() + " INFO: From socket",
-          id,
-          event
-        );
+        log.info("From socket", id, event);
       } else {
-        console.warn(new Date().toISOString() + " WARN: Unused event", event);
+        log.warning("Unused event", event);
       }
     }
   }
