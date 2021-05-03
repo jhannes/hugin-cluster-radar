@@ -1,6 +1,6 @@
 import { PodStatus, PodStatusTree } from "./model.ts";
 import { useMemo, useState } from "react";
-import { useWebSocket } from "./useWebSocket.ts";
+import { useWebSocket } from "../lib/useWebSocket.ts";
 
 type PodRepositoryEvent<T> =
   | {

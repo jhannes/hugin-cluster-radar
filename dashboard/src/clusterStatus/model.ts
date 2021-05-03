@@ -1,3 +1,5 @@
+import {FilterRecord} from "../lib/filterRecord.tsx";
+
 export type PodPhase =
   | "Pending"
   | "Running"
@@ -34,3 +36,5 @@ export interface BwStatus {
     { healthy: boolean; message?: string; timestamp: Date }
   >;
 }
+
+export type PodFilter = FilterRecord<"cluster" | "namespace" | "application">;
