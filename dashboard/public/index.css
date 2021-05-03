@@ -1,5 +1,7 @@
 body {
     color: rebeccapurple;
+    padding: 0;
+    margin: 0;
 }
 
 h1, h2, h3 {
@@ -9,6 +11,43 @@ h1, h2, h3 {
 h1 {
     font-size: 1.5em;
 }
+
+#root {
+    display: grid;
+    height: 100vh;
+    grid-template-rows: auto 1fr auto;
+}
+
+header, footer {
+    text-align: center;
+    padding-top: 0.2em;
+    padding-bottom: 0.2em;
+    background-color: beige;
+}
+
+nav {
+    position: absolute;
+    padding-top: 0.2em;
+    padding-left: 0.2em;
+    height: 100vh;
+    z-index: 1;
+    background-color: beige;
+    width: 200px;
+    left: -200px;
+    box-shadow: 5px 5px 5px 0 gray;
+    transition: left ease-in-out .5s;
+}
+
+nav.show-nav {
+    left: 0;
+}
+
+main {
+    overflow: auto;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+}
+
 
 .cluster .namespaces {
     display: flex;

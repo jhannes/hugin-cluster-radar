@@ -2,6 +2,10 @@ import { BwStatus, PodStatus, PodStatusTree } from "./model.ts";
 import React from "react";
 import { useRelativeTime } from "./useRelativeTime.ts";
 
+function noneSelected(filter: Record<string, boolean | undefined>) {
+  return Object.values(filter).filter((v) => !!v).length === 0;
+}
+
 function useUptime(time?: Date) {
   if (!time) {
     return undefined;
@@ -118,9 +122,14 @@ function AppStatusView({
 
 function NamespaceStatusView({
   namespace,
+  filter,
   namespaceTree,
 }: {
   namespace: string;
+  filter: Record<
+    "cluster" | "namespace" | "application",
+    Record<string, boolean | undefined>
+  >;
   namespaceTree: Record<string, Record<string, PodStatus<BwStatus>>>;
 }) {
   function handleClick() {
@@ -145,6 +154,9 @@ function NamespaceStatusView({
       <h2 onClick={handleClick}>{namespace}</h2>
       <div className="apps">
         {Object.keys(namespaceTree)
+          .filter(
+            (app) => noneSelected(filter.application) || filter.application[app]
+          )
           .sort()
           .map((app) => (
             <AppStatusView key={app} app={app} appTree={namespaceTree[app]} />
@@ -156,12 +168,17 @@ function NamespaceStatusView({
 
 export function ClusterStatusTree({
   cluster,
+  filter,
   startTime,
   connected,
   disconnectTime,
   tree,
 }: {
   cluster: string;
+  filter: Record<
+    "cluster" | "namespace" | "application",
+    Record<string, boolean | undefined>
+  >;
   startTime?: Date;
   connected: boolean;
   disconnectTime?: Date;
@@ -186,10 +203,14 @@ export function ClusterStatusTree({
       {disconnectedTimeAgo && <div>Last seen {disconnectedTimeAgo}</div>}
       <div className="namespaces">
         {Object.keys(tree)
+          .filter(
+            (ns) => noneSelected(filter.namespace) || filter.namespace[ns]
+          )
           .sort()
           .map((ns) => (
             <NamespaceStatusView
               namespace={ns}
+              filter={filter}
               key={ns}
               namespaceTree={tree[ns]}
             />

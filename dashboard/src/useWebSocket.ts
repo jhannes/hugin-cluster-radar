@@ -23,10 +23,12 @@ export function useWebSocket(callback: (data: string) => void, url: string) {
     ws.onclose = () => {
       if (connected.current) {
         setDisconnectTime(new Date());
+        setTimeout(connect, 1000);
+      } else {
+        setTimeout(connect, 5000);
       }
-      connected.current = false;
       setConnectTime(undefined);
-      setTimeout(connect, 5000);
+      connected.current = false;
     };
     ws.onmessage = (e: MessageEvent) => {
       savedCallback.current(e.data);
