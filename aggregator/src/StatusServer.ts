@@ -40,7 +40,7 @@ export class StatusServer<T> {
   }
 
   async handleRequest(request: ServerRequest) {
-    if (request.url === "/") {
+    if (request.url === "/" || request.url === "/hugin-aggregator") {
       const status = Object.values(this.repository.pods).map(
         ({ namespace, app, name, lastAttempt, lastContact, lastError }) => ({
           namespace,
@@ -56,12 +56,12 @@ export class StatusServer<T> {
         body,
         headers: new Headers({ "Content-type": "application/json" }),
       });
-    } else if (request.url === "/pods") {
+    } else if (request.url === "/pods" || request.url === "/hugin-aggregator/pods") {
       request.respond({
         body: JSON.stringify(this.repository.pods),
         headers: new Headers({ "Content-type": "application/json" }),
       });
-    } else if (request.url.startsWith("/ws")) {
+    } else if (request.url.startsWith("/ws") || request.url.startsWith("/hugin-aggregator/ws")) {
       log.info("Connect web socket");
       const { conn, r: bufReader, w: bufWriter, headers } = request;
       const socketRequest = { conn, bufReader, bufWriter, headers };
