@@ -4,3 +4,4 @@ node_modules
 aggregator/deployment/local
 aggregator/config
 dashboard/deployment/local
+build/
