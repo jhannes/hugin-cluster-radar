@@ -21,7 +21,6 @@ spec:
             - name: hugin-config
               mountPath: /usr/share/nginx/html/config
           image: jhannes/hugin-dashboard
-          imagePullPolicy: Always
           ports:
             - containerPort: 80
       volumes:

@@ -2,8 +2,8 @@
 module.exports = {
   mount: {
     /* ... */
-    public: "/",
-    src: "/dist"
+    public: "/hugin/",
+    src: "/hugin/dist"
   },
   plugins: [
     "@snowpack/plugin-react-refresh"
@@ -23,6 +23,7 @@ module.exports = {
     /* ... */
   },
   buildOptions: {
-    /* ... */
+    baseUrl: "/hugin/",
+    sourcemap: true
   },
 };

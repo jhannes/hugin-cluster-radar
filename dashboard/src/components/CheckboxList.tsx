@@ -12,8 +12,8 @@ export function CheckboxList({
   return (
     <>
       {options.map((s) => (
-        <div>
-          <label key={s}>
+        <div key={s}>
+          <label>
             <input
               type="checkbox"
               checked={value[s] || false}
