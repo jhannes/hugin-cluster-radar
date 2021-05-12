@@ -24,6 +24,7 @@ module.exports = {
   },
   buildOptions: {
     baseUrl: "/hugin/",
+    metaUrlPath: "hugin/_snowpack",
     sourcemap: true
   },
 };
