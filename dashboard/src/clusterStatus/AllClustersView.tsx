@@ -1,5 +1,5 @@
 import { useRecordHash } from "../lib/useRecordHash.tsx";
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useRef, useState} from "react";
 import { BwStatus, PodStatusTree } from "./model.ts";
 import { noneSelected } from "../lib/filterRecord.tsx";
 import { ClusterStatus } from "./ClusterStatus.tsx";
@@ -23,6 +23,14 @@ export function AllClustersView({
   const [clusterTrees, setClusterTrees] = useState<
     Record<string, PodStatusTree<BwStatus>>
   >({});
+  const menuRef = useRef();
+  
+  function handleClick(event: Event) {
+      console.log("Click click")
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+          setShowNav(false);
+      }
+  }
 
   useEffect(() => {
     setNamespaces(
@@ -42,6 +50,14 @@ export function AllClustersView({
       ].sort()
     );
   }, [clusterTrees]);
+  useEffect(() => {
+      if (showNav) {
+          document.addEventListener("click", handleClick);
+      } else {
+          document.removeEventListener("click", handleClick);
+      }
+      return () => document.removeEventListener("click", handleClick);
+  }, [showNav])
 
   return (
     <>
@@ -67,7 +83,7 @@ export function AllClustersView({
           ))}
       </main>
       <footer>Monitoring</footer>
-      <nav className={showNav ? "show-nav" : ""}>
+      <nav className={showNav ? "show-nav" : ""} ref={menuRef}>
         <PodFilterMenu
           clusters={clusters}
           apps={apps}
