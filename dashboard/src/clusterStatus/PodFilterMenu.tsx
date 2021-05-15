@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { CheckboxList } from "../components/CheckboxList.tsx";
-import {PodFilter} from "./model.ts";
+import { PodFilter } from "./model.ts";
 
 export function PodFilterMenu({
   clusters,
@@ -8,12 +8,16 @@ export function PodFilterMenu({
   namespaces,
   value,
   setValue,
+  compactView,
+  setCompactView,
 }: {
   clusters: Record<string, string>;
   apps: string[];
   namespaces: string[];
   value: PodFilter;
-  setValue: (value: PodFilter) => void;
+  setValue(value: PodFilter): void;
+  compactView: boolean;
+  setCompactView(value: boolean): void;
 }) {
   useEffect(() => {
     console.log(value);
@@ -43,6 +47,16 @@ export function PodFilterMenu({
 
   return (
     <>
+      <div>
+        <label>
+          <input
+            type="checkbox"
+            checked={compactView}
+            onChange={(e) => setCompactView(e.target.checked)}
+          />
+          Compact view
+        </label>
+      </div>
       <h3>Clusters</h3>
       <CheckboxList
         options={Object.keys(clusters)}

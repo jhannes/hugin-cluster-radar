@@ -1,4 +1,4 @@
-import {BwStatus, PodFilter, PodStatus} from "./model.ts";
+import { BwStatus, PodFilter, PodStatus } from "./model.ts";
 import { noneSelected } from "../lib/filterRecord.tsx";
 import { AppStatusView } from "./AppStatusView.tsx";
 import React from "react";
@@ -7,10 +7,12 @@ export function NamespaceStatusView({
   namespace,
   filter,
   namespaceTree,
+  compactView,
 }: {
   namespace: string;
   filter: PodFilter;
   namespaceTree: Record<string, Record<string, PodStatus<BwStatus>>>;
+  compactView: boolean;
 }) {
   function handleClick() {
     console.table(
@@ -40,7 +42,7 @@ export function NamespaceStatusView({
           )
           .sort()
           .map((app) => (
-            <AppStatusView key={app} app={app} appTree={namespaceTree[app]} />
+            <AppStatusView key={app} app={app} appTree={namespaceTree[app]} compactView={compactView} />
           ))}
       </div>
     </div>

@@ -8,11 +8,13 @@ export function ClusterStatus({
   cluster,
   filter,
   setClusterTree,
+  compactView
 }: {
   url: string;
   cluster: string;
   filter: PodFilter;
-  setClusterTree: (value: PodStatusTree<BwStatus>) => void;
+  setClusterTree(value: PodStatusTree<BwStatus>): void;
+  compactView: boolean
 }) {
   const {
     tree,
@@ -32,6 +34,7 @@ export function ClusterStatus({
       startTime={startTime || connectTime}
       connected={connected}
       disconnectTime={disconnectTime}
+      compactView={compactView}
     />
   );
 }

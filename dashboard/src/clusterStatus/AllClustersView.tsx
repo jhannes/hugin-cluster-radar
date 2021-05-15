@@ -20,13 +20,13 @@ export function AllClustersView({
   const [showNav, setShowNav] = useState(false);
   const [namespaces, setNamespaces] = useState<string[]>([]);
   const [apps, setApps] = useState<string[]>([]);
+  const [compactView, setCompactView] = useState(false);
   const [clusterTrees, setClusterTrees] = useState<
     Record<string, PodStatusTree<BwStatus>>
   >({});
   const menuRef = useRef();
   
   function handleClick(event: Event) {
-      console.log("Click click")
       if (menuRef.current && !menuRef.current.contains(event.target)) {
           setShowNav(false);
       }
@@ -67,7 +67,7 @@ export function AllClustersView({
           HUGIN
         </h1>
       </header>
-      <main>
+      <main style={{position: "relative"}}>
         {Object.keys(clusters)
           .filter((s) => noneSelected(filter.cluster) || filter.cluster[s])
           .map((s) => (
@@ -76,6 +76,7 @@ export function AllClustersView({
               cluster={s}
               filter={filter}
               url={clusters[s]}
+              compactView={compactView}
               setClusterTree={(tree) => {
                 setClusterTrees({ ...clusterTrees, [s]: tree });
               }}
@@ -90,6 +91,8 @@ export function AllClustersView({
           namespaces={namespaces}
           value={filter}
           setValue={setFilter}
+          compactView={compactView}
+          setCompactView={setCompactView}
         />
       </nav>
     </>

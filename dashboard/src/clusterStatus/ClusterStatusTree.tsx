@@ -1,4 +1,4 @@
-import {BwStatus, PodFilter, PodStatusTree} from "./model.ts";
+import { BwStatus, PodFilter, PodStatusTree } from "./model.ts";
 import React from "react";
 import { useRelativeTime } from "../lib/useRelativeTime.ts";
 import { noneSelected } from "../lib/filterRecord.tsx";
@@ -11,6 +11,7 @@ export function ClusterStatusTree({
   connected,
   disconnectTime,
   tree,
+  compactView,
 }: {
   cluster: string;
   filter: PodFilter;
@@ -18,6 +19,7 @@ export function ClusterStatusTree({
   connected: boolean;
   disconnectTime?: Date;
   tree: PodStatusTree<BwStatus>;
+  compactView: boolean;
 }) {
   const startTimeAgo = useRelativeTime(startTime);
   const disconnectedTimeAgo = useRelativeTime(disconnectTime);
@@ -48,6 +50,7 @@ export function ClusterStatusTree({
               filter={filter}
               key={ns}
               namespaceTree={tree[ns]}
+              compactView={compactView}
             />
           ))}
       </div>
