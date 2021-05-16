@@ -5,6 +5,10 @@ body {
     font-size: 12px;
 }
 
+ul {
+    margin: 0;
+}
+
 h1, h2, h3 {
     margin: 0 0 0.25em 0;
 }
@@ -47,6 +51,27 @@ main {
     overflow: auto;
     padding-left: 0.5em;
     padding-right: 0.5em;
+}
+
+.lightbox {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background: rgba(.0, .90, .0, .25);
+    display: flex;
+}
+
+.lightbox > * {
+    background: white;
+    width: clamp(100vw, auto, 50em);
+    margin: auto;
+    padding: 2em;
+}
+
+.lightbox ul {
+    text-align: start;
 }
 
 

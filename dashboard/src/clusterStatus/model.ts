@@ -31,6 +31,8 @@ export interface BwStatus {
   traffic?: number;
   errors?: number;
   errorMessages?: Record<string, string>;
+  cpu?: string;
+  memory?: string;
   healthChecks?: Record<
     string,
     { healthy: boolean; message?: string; timestamp: Date }

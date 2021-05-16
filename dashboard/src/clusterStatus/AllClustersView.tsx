@@ -67,7 +67,7 @@ export function AllClustersView({
           HUGIN
         </h1>
       </header>
-      <main style={{position: "relative"}}>
+      <main>
         {Object.keys(clusters)
           .filter((s) => noneSelected(filter.cluster) || filter.cluster[s])
           .map((s) => (
