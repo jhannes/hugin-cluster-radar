@@ -34,13 +34,14 @@ nav {
     position: absolute;
     padding-top: 0.2em;
     padding-left: 0.2em;
-    height: 100vh;
+    height: calc(100vh - 0.2em);
     z-index: 1;
     background-color: beige;
     width: 200px;
     left: -200px;
     box-shadow: 5px 5px 5px 0 gray;
     transition: left ease-in-out .5s;
+    overflow-y: hidden;
 }
 
 nav.show-nav {
@@ -143,7 +144,7 @@ main {
 .dot {
     height: 1em;
     width: 1em;
-    background-color: grey;
+    background-color: darkgray;
     border-radius: 50%;
     border: 1px solid white;
     display: inline-block;

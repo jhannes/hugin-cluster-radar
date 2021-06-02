@@ -89,6 +89,9 @@ export function PodFilterMenu({
       <div className={"busy"}>
         <span className="dot" /> Normal operation
       </div>
+      <div className={"starting"}>
+        <span className="dot" /> Recently started
+      </div>
       <h2>Numbers are</h2>
       <div>
         Uptime (e.g. 3w4d04h12m = 3 weeks, 2 days, 4 hours and 12 minutes). This
