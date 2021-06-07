@@ -77,6 +77,7 @@ export class StatusServer<T> {
       log.debug("sending to", socket);
       if (this.sockets[socket].isClosed) {
         log.warning("socket was closed without being removed!", socket);
+        delete this.sockets[socket];
         continue;
       }
       try {
