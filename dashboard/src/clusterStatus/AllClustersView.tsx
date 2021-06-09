@@ -33,10 +33,14 @@ export function AllClustersView({
   }
 
   useEffect(() => {
+    console.log("test");
     setNamespaces(
       [
         ...new Set(
-          Object.values(clusterTrees).flatMap((o: any) => Object.keys(o))
+          Object.entries(clusterTrees)
+              .filter(([key, ]) => Object.keys(filter.cluster).length === 0 || Object.keys(filter.cluster).includes(key))
+              .map(([,value]) => value)
+              .flatMap((o: any) => Object.keys(o))
         ),
       ].sort()
     );
