@@ -38,7 +38,7 @@ export class PodStatusRepository<T> {
         }
         this.notifyListeners({ type: "patch", name, value: { ...pod } });
       } catch (e) {
-        log.warning("Failed to get status from", name, e);
+        log.warning("Failed to get status from " + name + ": " + e);
         pod.lastError = new Date();
       }
     }
@@ -78,7 +78,7 @@ export class PodStatusRepository<T> {
       try {
         listener(event);
       } catch (e) {
-        log.error("Failed to notify listener", e);
+        log.error("Failed to notify listener: " + e);
       }
     });
   }

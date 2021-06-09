@@ -67,16 +67,16 @@ export class StatusServer<T> {
       const socketRequest = { conn, bufReader, bufWriter, headers };
       this.websocketLoop(await acceptWebSocket(socketRequest));
     } else {
-      log.warning("Not found", request.url);
+      log.warning("Not found: " + request.url);
       request.respond({ status: 404 });
     }
   }
 
   async broadCast(message: string) {
     for (const socket of Object.keys(this.sockets)) {
-      log.debug("sending to", socket);
+      log.debug("sending to " + socket);
       if (this.sockets[socket].isClosed) {
-        log.warning("socket was closed without being removed!", socket);
+        log.warning("socket was closed without being removed! " + socket);
         delete this.sockets[socket];
         continue;
       }
@@ -101,12 +101,12 @@ export class StatusServer<T> {
 
     for await (const event of socket) {
       if (isWebSocketCloseEvent(event)) {
-        log.info("Disconnected", id);
+        log.info("Disconnected " + id);
         delete this.sockets[id];
       } else if (typeof event === "string") {
-        log.info("From socket", id, event);
+        log.info("From socket " + id + ": " + event);
       } else {
-        log.warning("Unused event", event);
+        log.warning("Unused event: " + event);
       }
     }
   }

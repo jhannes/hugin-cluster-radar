@@ -51,7 +51,7 @@ export async function watchPods<T>(
           });
         }
       } else {
-        log.info("unhandled event", { type, pod });
+        log.info({message: "unhandled event", type, pod });
       }
     }
   });

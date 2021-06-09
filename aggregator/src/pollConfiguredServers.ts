@@ -12,7 +12,7 @@ export async function pollConfiguredServers(
       namespace: string;
       apps: Record<string, string[]>;
     }> = json;
-    log.info("Endpoints :", JSON.stringify(endpoints));
+    log.info("Endpoints: " + JSON.stringify(endpoints));
     for (const { namespace, apps } of endpoints) {
       for (const app of Object.keys(apps)) {
         const pods = apps[app!];
