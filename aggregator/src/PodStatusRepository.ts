@@ -30,10 +30,10 @@ export class PodStatusRepository<T> {
         const json: any = await statusFunction();
         pod.status = json;
         pod.lastContact = new Date();
-        if (json.startTime) {
+        if (json && json.startTime) {
           pod.startTime = json.startTime;
         }
-        if (json.id) {
+        if (json && json.id) {
           pod.name = json.id;
         }
         this.notifyListeners({ type: "patch", name, value: { ...pod } });

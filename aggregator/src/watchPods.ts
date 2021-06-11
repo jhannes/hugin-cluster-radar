@@ -27,12 +27,12 @@ export async function watchPods<T>(
 
           const port = (pod.spec?.containers || [])
             .map((c) =>
-              c
+              c.ports && c
                 .ports!.filter((p) => p.name === "monitoring-port")
                 .map((p) => p.containerPort)
             )
             .flat()[0];
-          const statusUrl = podIP
+          const statusUrl = podIP && port
             ? "http://" + podIP + ":" + port + "/check"
             : undefined;
           const statusFunction: () => Promise<T | undefined> = statusUrl
