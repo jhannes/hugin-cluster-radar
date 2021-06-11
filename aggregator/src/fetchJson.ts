@@ -6,7 +6,7 @@ export async function fetchJson(url: string): Promise<any> {
     const res = await fetch(url);
     return await res.json();
   } catch (e) {
-    log.error("while fetching " + url + ": " + e);
+    log.error({message: "while fetching", url}, e);
     throw e;
   }
 }

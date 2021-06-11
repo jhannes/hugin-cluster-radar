@@ -33,7 +33,7 @@ export class StatusServer<T> {
       try {
         await this.handleRequest(request);
       } catch (e) {
-        log.error(e);
+        log.error("request loop failed", e);
         request.respond({ status: 500 });
       }
     }
@@ -83,7 +83,7 @@ export class StatusServer<T> {
       try {
         await this.sockets[socket].send(message);
       } catch (e) {
-        log.warning(e);
+        log.warning({message: "failed to send to socket", socket}, e);
       }
     }
   }
