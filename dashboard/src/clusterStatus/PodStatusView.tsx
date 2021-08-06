@@ -108,7 +108,7 @@ export function PodStatusView({
                 <span
                   title={JSON.stringify(unhealthyHealthChecks, undefined, "  ")}
                 >
-                  {" | "}
+                  {"\u00A0|\u00A0"}
                   {Object.keys(healthChecks).length -
                     unhealthyHealthChecks.length}
                   /{Object.keys(healthChecks).length}
