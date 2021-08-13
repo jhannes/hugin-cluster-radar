@@ -56,6 +56,10 @@ export class PodStatusRepository<T> {
       }
     } else if (event === "ADDED") {
       const { name, statusFunction } = data;
+      if (this.pods[name]) {
+        log.warning("Pod already exists " + name);
+        return;
+      }
       log.info("Pod added " + name);
       const timer = setInterval(
         () => (async () => await this.updateStatus(name, statusFunction))(),
