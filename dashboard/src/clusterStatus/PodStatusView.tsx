@@ -93,7 +93,7 @@ export function PodStatusView({
       </div>
       {expanded && (
         <>
-          <div title={pod.status?.version}>{uptime}</div>
+          <div title={pod.status?.version}>{uptime}</div> 
           {pod.status && (
             <div>
               {pod.status.traffic}
@@ -101,14 +101,14 @@ export function PodStatusView({
             </div>
           )}
           {pod.status && (
-            <div>
+            <div className="podStatus">
               {pod.status?.errors}
               {pod.status?.errors ? "⚠" : ""}
               {pod.status?.healthChecks && (
                 <span
                   title={JSON.stringify(unhealthyHealthChecks, undefined, "  ")}
                 >
-                  {"\u00A0|\u00A0"}
+                  {" | "}
                   {Object.keys(healthChecks).length -
                     unhealthyHealthChecks.length}
                   /{Object.keys(healthChecks).length}

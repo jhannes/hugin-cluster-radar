@@ -141,6 +141,10 @@ main {
     padding-right: 0.25em;
 }
 
+.pod .podStatus {
+    white-space: nowrap;
+}
+
 .dot {
     height: 1em;
     width: 1em;
