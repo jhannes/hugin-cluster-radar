@@ -5,7 +5,7 @@ import {AllClustersView} from "./clusterStatus/AllClustersView.tsx";
 function App() {
   // @ts-ignore
   const servers: Record<string, string> = window.servers || {
-    Simulator: "ws://localhost:3004/ws",
+    Simulator: "ws://localhost:3001/ws",
   };
   return <AllClustersView clusters={servers} />;
 }
