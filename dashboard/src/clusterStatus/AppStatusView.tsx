@@ -1,4 +1,4 @@
-import { BwStatus, PodStatus } from "./model.ts";
+import { BwStatus, HuginStatus } from "./model.ts";
 import { PodStatusView } from "./PodStatusView.tsx";
 import React, {useState} from "react";
 
@@ -8,7 +8,7 @@ export function AppStatusView({
   compactView,
 }: {
   app: string;
-  appTree: Record<string, PodStatus<BwStatus>>;
+  appTree: Record<string, HuginStatus<BwStatus>>;
   compactView: boolean;
 }) {
   const [expanded, setExpanded] = useState(false);

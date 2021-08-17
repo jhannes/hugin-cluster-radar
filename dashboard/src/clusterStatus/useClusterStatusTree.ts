@@ -1,4 +1,4 @@
-import { PodStatus, PodStatusTree } from "./model.ts";
+import { HuginStatus, PodStatusTree } from "./model.ts";
 import { useMemo, useState } from "react";
 import { useWebSocket } from "../lib/useWebSocket.ts";
 
@@ -6,7 +6,7 @@ type PodRepositoryEvent<T> =
   | {
       type: "snapshot";
       startTime: Date;
-      snapshot: Record<string, PodStatus<T>>;
+      snapshot: Record<string, HuginStatus<T>>;
     }
   | {
       type: "patch";
@@ -24,13 +24,13 @@ export function useClusterStatusTree<T>(
   disconnectTime?: Date;
 } {
   const [startTime, setStartTime] = useState<Date|undefined>();
-  const [podList, setPodList] = useState<Record<string, PodStatus<unknown>>>(
+  const [podList, setPodList] = useState<Record<string, HuginStatus<unknown>>>(
     {}
   );
 
   const { connectTime, connected, disconnectTime } = useWebSocket(
     (message: string) => {
-      const payload: PodRepositoryEvent<PodStatus<unknown>> = JSON.parse(
+      const payload: PodRepositoryEvent<HuginStatus<unknown>> = JSON.parse(
         message
       );
       if (payload.type === "snapshot") {
@@ -47,7 +47,7 @@ export function useClusterStatusTree<T>(
 
   const tree = useMemo(() => {
     const result: PodStatusTree<unknown> = {};
-    const values: PodStatus<unknown>[] = Object.values(podList);
+    const values: HuginStatus<unknown>[] = Object.values(podList);
     for (const pod of values) {
       const { namespace, app, name } = pod;
       if (!result[namespace]) {

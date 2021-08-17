@@ -7,7 +7,7 @@ export type PodPhase =
   | "Terminated"
   | "Failed";
 
-export interface PodStatus<T> {
+export interface HuginStatus<T> {
   name: string;
   app: string;
   namespace: string;
@@ -17,11 +17,66 @@ export interface PodStatus<T> {
   lastError?: Date;
   statusFunction?: () => Promise<T>;
   status?: T;
+  podStatus?: PodStatus;
+  logs?: string;
+}
+
+export interface PodStatus {
+  conditions?: Array<PodCondition>;
+  containerStatuses?: Array<ContainerStatus>;
+  phase?: string;
+}
+
+interface ContainerStatus {
+  containerID?: string;
+  image: string;
+  imageID: string;
+  lastState?: ContainerState;
+  message?: string;
+  name: string;
+  ready: boolean;
+  restartCount: number;
+  started?: boolean;
+  state?: ContainerState;
+}
+
+export interface ContainerState {
+  running?: ContainerStateRunning;
+  terminated?: ContainerStateTerminated | null;
+  waiting?: ContainerStateWaiting | null;
+}
+
+interface ContainerStateRunning {
+  startedAt?: Date;
+}
+
+interface ContainerStateTerminated {
+  containerID?: string;
+  exitCode: number;
+  finishedAt?: Date;
+  message?: string;
+  reason?: string;
+  signal?: number;
+  startedAt?: Date;
+}
+
+interface ContainerStateWaiting {
+  message?: string;
+  reason?: string;
+}
+
+export interface PodCondition {
+  lastProbeTime?: Date;
+  lastTransitionTime?: Date;
+  message?: string;
+  reason?: string;
+  status: string;
+  type: string;
 }
 
 export type PodStatusTree<T> = Record<
   string,
-  Record<string, Record<string, PodStatus<T>>>
+  Record<string, Record<string, HuginStatus<T>>>
 >;
 
 export interface BwStatus {

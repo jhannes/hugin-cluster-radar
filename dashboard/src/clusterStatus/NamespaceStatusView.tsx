@@ -1,4 +1,4 @@
-import { BwStatus, PodFilter, PodStatus } from "./model.ts";
+import { BwStatus, PodFilter, HuginStatus } from "./model.ts";
 import { noneSelected } from "../lib/filterRecord.tsx";
 import { AppStatusView } from "./AppStatusView.tsx";
 import React from "react";
@@ -11,7 +11,7 @@ export function NamespaceStatusView({
 }: {
   namespace: string;
   filter: PodFilter;
-  namespaceTree: Record<string, Record<string, PodStatus<BwStatus>>>;
+  namespaceTree: Record<string, Record<string, HuginStatus<BwStatus>>>;
   compactView: boolean;
 }) {
   function handleClick() {

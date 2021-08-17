@@ -1,8 +1,8 @@
-import { BwStatus, PodStatus } from "./model.ts";
+import {BwStatus, HuginStatus, PodStatus} from "./model.ts";
 import { useUptime } from "../lib/useUptime.tsx";
 import React, {useEffect, useRef, useState} from "react";
 
-export function podStatus(pod: PodStatus<BwStatus>) {
+export function podStatus(pod: HuginStatus<BwStatus>) {
   const { lastError, lastContact } = pod;
   const healthChecks = pod.status?.healthChecks || {};
   const unhealthyHealthChecks = Object.values(healthChecks).filter(
@@ -26,7 +26,7 @@ export function podStatus(pod: PodStatus<BwStatus>) {
   }
 }
 
-function PodLightbox({pod, onClose}: { pod: PodStatus<BwStatus>, onClose(): void }) {
+function PodLightbox({pod, onClose}: { pod: HuginStatus<BwStatus>, onClose(): void }) {
   const {namespace, app, name, startTime, status} = pod;
   const ref = useRef();
   function handleClick(event: Event) {
@@ -59,6 +59,9 @@ function PodLightbox({pod, onClose}: { pod: PodStatus<BwStatus>, onClose(): void
           {unhealthyHealthChecks.map(h => <li key={h[0]}><strong>{h[0]}</strong>: {h[1].message}</li>)}
         </ul>
       </>}
+      {
+        pod.logs && <div className="logs">{pod.logs}</div>
+      }
       <button onClick={onClose}>Close</button>
     </div>
   </div>;
@@ -68,7 +71,7 @@ export function PodStatusView({
   pod,
   expanded,
 }: {
-  pod: PodStatus<BwStatus>;
+  pod: HuginStatus<BwStatus>;
   expanded: boolean;
 }) {
   const [showPod, setShowPod] = useState<boolean>();
@@ -93,7 +96,8 @@ export function PodStatusView({
       </div>
       {expanded && (
         <>
-          <div title={pod.status?.version}>{uptime}</div> 
+          <div title={pod.status?.version}>{uptime}</div>
+          {pod.podStatus && <ContainerStatus podStatus={pod.podStatus} />}
           {pod.status && (
             <div>
               {pod.status.traffic}
@@ -121,4 +125,12 @@ export function PodStatusView({
       )}
     </div>
   );
+}
+
+function ContainerStatus({podStatus}: {podStatus: PodStatus}) {
+  const failedConditions = podStatus?.conditions?.filter(c => c.status !== "True");
+  if (!failedConditions || failedConditions.length == 0) {
+    return null;
+  }
+  return <span title={failedConditions[0].message}>⚠</span>
 }
