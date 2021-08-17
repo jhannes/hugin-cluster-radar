@@ -1,21 +1,21 @@
-import { PodStatus } from "./model.ts";
-import { log } from "../deps.ts";
+import { HuginStatus } from "./model.ts";
+import { log, PodStatus } from "../deps.ts";
 
 export type PodRepositoryEvent<T> =
   | {
     type: "snapshot";
-    snapshot: Record<string, PodStatus<T | undefined>>;
+    snapshot: Record<string, HuginStatus<T | undefined>>;
   }
   | {
     type: "patch";
     name: string;
-    value: PodStatus<T | undefined>;
+    value: HuginStatus<T | undefined>;
   };
 
 export class PodStatusRepository<T> {
   readonly pods: Record<
     string,
-    PodStatus<T | undefined> & { timer: number }
+    HuginStatus<T | undefined> & { timer: number }
   > = {};
   readonly listeners: ((event: PodRepositoryEvent<T>) => void)[] = [];
 
@@ -46,7 +46,8 @@ export class PodStatusRepository<T> {
 
   onEvent(
     event: "ADDED" | "MODIFIED" | "DELETED",
-    data: PodStatus<T | undefined>,
+    data: HuginStatus<T | undefined>,
+    podStatus?: PodStatus
   ) {
     if (event === "DELETED") {
       if (this.pods[data.name]) {
@@ -65,10 +66,11 @@ export class PodStatusRepository<T> {
         () => (async () => await this.updateStatus(name, statusFunction))(),
         15000,
       );
-      this.pods[name] = { ...data, timer };
+      this.pods[name] = { ...data, timer, podStatus };
       this.updateStatus(name, statusFunction);
     } else if (this.pods[data.name]) {
       this.pods[data.name].phase = data.phase;
+      this.pods[data.name].podStatus = podStatus;
     }
     this.notifyListeners({ type: "snapshot", snapshot: this.pods });
   }

@@ -49,7 +49,7 @@ export async function watchPods<T>(
             lastContact: new Date(),
             status: undefined,
             statusFunction,
-          });
+          }, pod.status);
         }
       } else {
         log.info({message: "unhandled event", type, pod });

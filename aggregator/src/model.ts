@@ -1,3 +1,5 @@
+import {PodStatus} from "../deps.ts"
+
 export type PodPhase =
   | "Pending"
   | "Running"
@@ -14,7 +16,7 @@ export const ALL_POD_PHASES: PodPhase[] = [
   "Offline",
 ];
 
-export interface PodStatus<T> {
+export interface HuginStatus<T> {
   name: string;
   app: string;
   namespace: string;
@@ -25,4 +27,5 @@ export interface PodStatus<T> {
   lastError?: Date;
   statusFunction: () => Promise<T>;
   status?: T;
+  podStatus?: PodStatus
 }
