@@ -27,5 +27,6 @@ export interface HuginStatus<T> {
   lastError?: Date;
   statusFunction: () => Promise<T>;
   status?: T;
-  podStatus?: PodStatus
+  podStatus?: PodStatus,
+  logs?: string
 }
