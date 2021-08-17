@@ -41,7 +41,7 @@ export class PodStatusRepository<T> {
         }
         this.notifyListeners({ type: "patch", name, value: { ...pod } });
       } catch (e) {
-        log.warning("Failed to get status from " + name + ": " + e, e);
+        log.warning("Failed to get status from pod", name, e);
         pod.lastError = new Date();
       }
     }
@@ -54,23 +54,23 @@ export class PodStatusRepository<T> {
   ) {
     if (event === "DELETED") {
       if (this.pods[data.name]) {
-        log.info("Pod removed " + data.name);
+        log.info("Pod removed", data.name);
         clearInterval(this.pods[data.name].timer);
         delete this.pods[data.name];
       }
     } else if (event === "ADDED") {
       const { name, statusFunction } = data;
       if (this.pods[name]) {
-        log.info("Pod already exists " + name);
-        return;
+        log.info("Pod already exists", name);
+      } else {
+        log.info("Pod added", name);
+        const timer = setInterval(
+            () => (async () => await this.updateStatus(name, statusFunction))(),
+            15000,
+        );
+        this.pods[name] = { ...data, timer, podStatus };
+        this.updateStatus(name, statusFunction);
       }
-      log.info("Pod added " + name);
-      const timer = setInterval(
-        () => (async () => await this.updateStatus(name, statusFunction))(),
-        15000,
-      );
-      this.pods[name] = { ...data, timer, podStatus };
-      this.updateStatus(name, statusFunction);
       this.fetchLog(name, data.namespace, podStatus);
     } else if (this.pods[data.name]) {
       this.pods[data.name].phase = data.phase;
@@ -84,14 +84,14 @@ export class PodStatusRepository<T> {
     if (podStatus?.containerStatuses) {
       podStatus.containerStatuses.forEach(container => {
         if (!container.ready && this.kubernetes) {
-          log.warning("Finding status for " + container.containerID);
+          log.warning("Fetching log for container", container.containerID);
           this.kubernetes.namespace(namespace).getPodLog(name, {
             tailLines: 10
           }).then(result => {
             if (this.pods[name]) {
               this.pods[name].logs = result;
             } else {
-              log.warning("Pod removed before log received "+ name)
+              log.warning("Pod removed before log received", name)
             }
           });
         }

@@ -24,7 +24,7 @@ export async function watchPods<T>(
         if (type === "ADDED" || type === "MODIFIED" || type == "DELETED") {
           const { labels, namespace, name } = pod.metadata;
           const { phase, startTime, podIP } = pod.status;
-          log.debug("Pod status " + pod.status);
+          log.debug("Pod status", pod.status);
 
           const port = (pod.spec?.containers || [])
             .map((c) =>
@@ -48,7 +48,7 @@ export async function watchPods<T>(
             lastAttempt: new Date(),
             lastContact: new Date(),
             status: undefined,
-            statusFunction,
+            statusFunction //: async () => { console.log("stub status check for " + namespace + "/" + name); return undefined; },
           }, pod.status);
         }
       } else {
