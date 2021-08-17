@@ -1,9 +1,10 @@
-FROM hayd/alpine-deno:1.10.2
+FROM denoland/deno:1.13.0
 
 EXPOSE 1993
 
 WORKDIR /app
 
+RUN deno --version
 COPY deps.ts /app
 RUN deno cache --unstable deps.ts
 
