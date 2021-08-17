@@ -32,6 +32,7 @@ export class PodStatusRepository<T> {
       try {
         pod.lastAttempt = new Date();
         const json: any = await statusFunction();
+        log.getLogger("pods").debug("Status", name, json);
         pod.status = json;
         pod.lastContact = new Date();
         if (json && json.startTime) {

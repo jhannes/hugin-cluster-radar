@@ -7,16 +7,10 @@ class Handler extends log.handlers.BaseHandler {
 
     format(logRecord: any): string {
         const args: unknown[] = [];
-        const output: LogEvent = {
-            loggerName: logRecord.loggerName,
-            levelName: logRecord.levelName,
-            msg: logRecord.msg,
-            error: undefined,
-            args
-        };
+        let error: {message: string, stack?: string} | undefined;
         for (const arg of logRecord.args) {
             if (arg instanceof Error) {
-                output.error = {
+                error = {
                     message: arg.message,
                     stack: arg.stack
                 };
@@ -25,18 +19,14 @@ class Handler extends log.handlers.BaseHandler {
             }
         }
 
-        return JSON.stringify(output);
-    }
-}
-
-interface LogEvent {
-    loggerName: string;
-    levelName: string;
-    msg: string;
-    args: unknown[];
-    error?: {
-        message: string,
-        stack?: string;
+        return JSON.stringify({
+            logger: logRecord.loggerName,
+            level: logRecord.levelName,
+            message: logRecord.msg,
+            fullMessage: JSON.stringify(logRecord),
+            error,
+            args
+        });
     }
 }
 
