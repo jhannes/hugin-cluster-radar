@@ -50,6 +50,18 @@ export async function setupLogging() {
             default: {
                 level: "DEBUG",
                 handlers: ["standard"],
+            },
+            server: {
+                level: "DEBUG",
+                handlers: ["standard"],
+            },
+            pods: {
+                level: "DEBUG",
+                handlers: ["standard"],
+            },
+            websocket: {
+                level: "DEBUG",
+                handlers: ["standard"],
             }
         }
     })

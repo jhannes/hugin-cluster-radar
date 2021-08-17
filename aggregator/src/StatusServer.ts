@@ -33,7 +33,7 @@ export class StatusServer<T> {
       try {
         await this.handleRequest(request);
       } catch (e) {
-        log.error("request loop failed", e);
+        log.getLogger("websocket").error("request loop failed", e);
         request.respond({ status: 500 });
       }
     }
@@ -62,28 +62,28 @@ export class StatusServer<T> {
         headers: new Headers({ "Content-type": "application/json" }),
       });
     } else if (request.url.startsWith("/ws") || request.url.startsWith("/hugin-aggregator/ws")) {
-      log.info("Connect web socket");
+      log.getLogger("websocket").info("Connect web socket");
       const { conn, r: bufReader, w: bufWriter, headers } = request;
       const socketRequest = { conn, bufReader, bufWriter, headers };
       this.websocketLoop(await acceptWebSocket(socketRequest));
     } else {
-      log.warning("Resource not found for URL", request.url);
+      log.getLogger("server").warning("Resource not found for URL", request.url);
       request.respond({ status: 404 });
     }
   }
 
   async broadCast(message: string) {
     for (const socket of Object.keys(this.sockets)) {
-      log.debug("sending to websocket", socket);
+      log.getLogger("websocket").debug("sending to websocket", socket);
       if (this.sockets[socket].isClosed) {
-        log.warning("websocket was closed without being removed!", socket);
+        log.getLogger("websocket").warning("websocket was closed without being removed!", socket);
         delete this.sockets[socket];
         continue;
       }
       try {
         await this.sockets[socket].send(message);
       } catch (e) {
-        log.warning({message: "failed to send to socket", socket}, e);
+        log.getLogger("websocket").warning({message: "failed to send to socket", socket}, e);
       }
     }
   }
@@ -101,12 +101,12 @@ export class StatusServer<T> {
 
     for await (const event of socket) {
       if (isWebSocketCloseEvent(event)) {
-        log.info("Socket disconnected", id);
+        log.getLogger("websocket").info("Socket disconnected", id);
         delete this.sockets[id];
       } else if (typeof event === "string") {
-        log.info("Event from socket", id, event);
+        log.getLogger("websocket").info("Event from socket", id, event);
       } else {
-        log.warning("Unused event from socket", id, event);
+        log.getLogger("websocket").warning("Unused event from socket", id, event);
       }
     }
   }

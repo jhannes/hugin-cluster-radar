@@ -7,7 +7,7 @@ import {setupLogging} from "./src/logging.ts";
 
 await setupLogging();
 
-log.info("Starting on http://localhost:3001");
+log.getLogger("server").info("Starting on http://localhost:3001");
 
 const kubernetes = await autoDetectClient();
 const repository = new PodStatusRepository<unknown>(new CoreV1Api(kubernetes));

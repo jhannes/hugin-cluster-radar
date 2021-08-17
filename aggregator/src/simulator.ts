@@ -1,6 +1,7 @@
 import { ALL_POD_PHASES } from "./model.ts";
 import { Random } from "../lib/Random.ts";
 import { PodRepositoryEvent } from "./PodStatusRepository.ts";
+import {log} from "../deps.ts";
 
 const random = new Random(new Date().getDate());
 const namespaces = ["superapp", "default", "some-ns"];
@@ -57,5 +58,5 @@ export function generateEvent(repository: PodRepositoryEvent<unknown>) {
       ...app,
     });
   }
-  log.trace("generating event", action);
+  log.getLogger("server").debug("generating event", action);
 }
