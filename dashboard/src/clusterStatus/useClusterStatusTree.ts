@@ -12,6 +12,10 @@ type PodRepositoryEvent<T> =
       type: "patch";
       name: string;
       value: T;
+    }
+  | {
+    type: "delete",
+    name: string
     };
 
 export function useClusterStatusTree<T>(
@@ -37,7 +41,10 @@ export function useClusterStatusTree<T>(
         setStartTime(payload.startTime && new Date(payload.startTime));
         setPodList(payload.snapshot);
       } else if (payload.type === "patch") {
-        setPodList({ ...podList, [payload.name]: payload.value });
+          setPodList({...podList, [payload.name]: payload.value});
+      } else if (payload.type === "delete") {
+          delete podList[payload.name];
+          setPodList(podList);
       } else {
         console.warn("Unknown message type", payload);
       }

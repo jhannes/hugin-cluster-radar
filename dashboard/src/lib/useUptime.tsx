@@ -17,7 +17,7 @@ export function useUptime(time?: Date) {
   }
 
   const { weeks, days, hours, mins } = period(
-    (new Date().getTime() - time.getTime()) / 1000
+    Math.max((new Date().getTime() - time.getTime()) / 1000, 0)
   );
   let result = "";
   if (weeks) result += weeks + "w";
