@@ -97,7 +97,7 @@ export function PodStatusView({
       {expanded && (
         <>
           <div title={pod.status?.version}>{uptime}</div>
-          {pod.podStatus && <ContainerStatus podStatus={pod.podStatus} />}
+          {!pod.status && pod.podStatus && <ContainerStatus podStatus={pod.podStatus} />}
           {pod.status && (
             <div>
               {pod.status.traffic}
@@ -129,8 +129,13 @@ export function PodStatusView({
 
 function ContainerStatus({podStatus}: {podStatus: PodStatus}) {
   const failedConditions = podStatus?.conditions?.filter(c => c.status !== "True");
-  if (!failedConditions || failedConditions.length == 0) {
+  if (!failedConditions || failedConditions.length == 0 || !podStatus.containerStatuses) {
     return null;
   }
-  return <span title={failedConditions[0].message}>⚠</span>
+  return (<>
+      <div title={podStatus.containerStatuses.filter(c => !c.ready).map(c => c.state?.waiting?.message || "").join("\n")}>
+          {podStatus.containerStatuses.filter(c => c.ready).length} / {podStatus.containerStatuses.length}
+      </div>
+      <div title={failedConditions[0].message}>⚠</div>
+    </>);
 }
