@@ -9,7 +9,7 @@ export function podStatus(pod: HuginStatus<BwStatus>) {
     (h) => !h.healthy
   );
   const traffic = pod.status?.traffic || 0;
-  const busy = traffic > 100;
+  const busy = !pod.status || traffic > 100;
   const unhealthy =
     unhealthyHealthChecks.length > 0 ||
     (pod.status?.errors && pod.status.errors > 0);
@@ -128,14 +128,14 @@ export function PodStatusView({
 }
 
 function ContainerStatus({podStatus}: {podStatus: PodStatus}) {
-  const failedConditions = podStatus?.conditions?.filter(c => c.status !== "True");
-  if (!failedConditions || failedConditions.length == 0 || !podStatus.containerStatuses) {
-    return null;
+  if (!podStatus?.conditions || !podStatus.containerStatuses) {
+      return null;
   }
+  const failedConditions = podStatus?.conditions?.filter(c => c.status !== "True");
   return (<>
       <div title={podStatus.containerStatuses.filter(c => !c.ready).map(c => c.state?.waiting?.message || "").join("\n")}>
           {podStatus.containerStatuses.filter(c => c.ready).length} / {podStatus.containerStatuses.length}
       </div>
-      <div title={failedConditions[0].message}>⚠</div>
+      {failedConditions.length > 0 && <div title={failedConditions[0].message}>⚠</div>}
     </>);
 }
