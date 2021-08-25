@@ -46,11 +46,11 @@ export async function setupLogging() {
                 handlers: ["standard"],
             },
             pods: {
-                level: "DEBUG",
+                level: "INFO",
                 handlers: ["standard"],
             },
             websocket: {
-                level: "DEBUG",
+                level: "INFO",
                 handlers: ["standard"],
             }
         }

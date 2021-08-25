@@ -59,10 +59,10 @@ export class StatusServer<T> implements HuginStatusContainer<T> {
         create: boolean = true
     ) {
         if (!create && !this.serverStatus[name]) {
-            log.getLogger("pods").debug("Don't update deleted pod", name);
+            log.getLogger("pods").info("Don't update deleted pod", name);
             return;
         } else if (!this.serverStatus[name]) {
-            log.getLogger("pods").debug("Adding pod", name);
+            log.getLogger("pods").info("Adding pod", name);
         } else {
             log.getLogger("pods").debug("Update pod", name);
         }
