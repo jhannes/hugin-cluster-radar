@@ -6,7 +6,7 @@ export async function fetchJson(url: string): Promise<any> {
     const res = await fetch(url);
     return await res.json();
   } catch (e) {
-    log.getLogger("pods").error("while fetching pod status", url, e);
+    log.getLogger("pods").warn("while fetching pod status", url, e);
     throw e;
   }
 }
