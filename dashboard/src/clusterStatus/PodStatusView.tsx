@@ -84,8 +84,8 @@ export function PodStatusView({
 
   const uptime = useUptime(startTime ? new Date(startTime) : undefined);
   const healthChecks = pod.status?.healthChecks || {};
-  const unhealthyHealthChecks = Object.values(healthChecks).filter(
-    (h) => !h.healthy
+  const unhealthyHealthChecks = Object.entries(healthChecks).filter(
+    ([k,v]) => !v.healthy
   );
   const status = podStatus(pod);
   return (
