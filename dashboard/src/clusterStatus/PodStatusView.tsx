@@ -46,7 +46,7 @@ function PodLightbox({pod, onClose}: { pod: HuginStatus<BwStatus>, onClose(): vo
     <div ref={ref}>
       <h1>{namespace}: {app}</h1>
       <div><strong>Name:</strong> {name}</div>
-      <div><strong>Started:</strong> {startTime}</div>
+      <div><strong>Started:</strong> {startTime || status?.startTime}</div>
       <div><strong>Build time:</strong> {status?.buildTime}</div>
       <div><strong>Version:</strong> {status?.version}</div>
       <div><strong>Traffic:</strong> {status?.traffic}</div>
@@ -80,7 +80,8 @@ export function PodStatusView({
     setShowPod(!showPod);
   }
 
-  const { name, phase, startTime } = pod;
+  const { name, phase } = pod;
+  const startTime = pod.startTime || pod.status?.startTime;
 
   const uptime = useUptime(startTime ? new Date(startTime) : undefined);
   const healthChecks = pod.status?.healthChecks || {};

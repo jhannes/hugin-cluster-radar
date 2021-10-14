@@ -83,6 +83,7 @@ export interface BwStatus {
   gitCommit?: string;
   version?: string;
   buildTime?: Date;
+  startTime?: Date;
   traffic?: number;
   errors?: number;
   errorMessages?: Record<string, string>;
