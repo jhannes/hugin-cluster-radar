@@ -153,9 +153,23 @@ main {
     margin: 0.2em;
 }
 
+.busy .dot, .healthy .dot {
+    background-color: green;
+}
+
+.starting .dot {
+    background-color: green;
+    animation: glowing-green 700ms infinite;
+}
+
 .Failed .dot, .Offline .dot, .down .dot {
     background-color: darkred;
     animation: glowing-red 700ms infinite;
+}
+
+.down.Running .dot, .down.Pending .dot{
+    background-color: gold;
+    animation: glowing-gold 700ms infinite;
 }
 
 @keyframes glowing-red {
@@ -168,7 +182,7 @@ main {
     }
     100% {
         box-shadow: 0 0 3px firebrick;
-    }    
+    }
 }
 
 .Pending .dot {
@@ -181,15 +195,6 @@ main {
     }
 }
 
-.busy .dot, .healthy .dot {
-    background-color: green;
-}
-
-.starting .dot {
-    background-color: green;
-    animation: glowing-green 700ms infinite;
-}
-
 @keyframes glowing-green {
     0% {
         box-shadow: 0 0 3px green;
@@ -200,6 +205,19 @@ main {
     }
     100% {
         box-shadow: 0 0 3px green;
+    }
+}
+
+@keyframes glowing-gold {
+    0% {
+        box-shadow: 0 0 3px gold;
+    }
+    50% {
+        opacity: 80%;
+        box-shadow: 0 0 10px goldenrod;
+    }
+    100% {
+        box-shadow: 0 0 3px gold;
     }
 }
 
