@@ -72,7 +72,7 @@ export class StatusServer<T> implements HuginStatusContainer<T> {
         const event: PodRepositoryEvent<T> = {type: "patch", name, value};
         this.broadCast(JSON.stringify(event));
     }
-    
+
     pollStatus(name: string, timeout: number, fetcher: () => Promise<unknown>) {
         if (this.statusTimers[name]?.timer) {
             clearInterval(this.statusTimers[name].timer);
@@ -99,6 +99,7 @@ export class StatusServer<T> implements HuginStatusContainer<T> {
             }
             this.serverStatus[name].lastContact = new Date();
             this.serverStatus[name].status = status;
+            this.serverStatus[name].phase = "Running";
             const event: PodRepositoryEvent<T> = {type: "patch", name, value: this.serverStatus[name]};
             this.broadCast(JSON.stringify(event));
         } catch (e) {
@@ -108,6 +109,7 @@ export class StatusServer<T> implements HuginStatusContainer<T> {
             }
             this.serverStatus[name].lastError = new Date();
             this.serverStatus[name].status = undefined;
+            this.serverStatus[name].phase = "Offline";
             const event: PodRepositoryEvent<T> = {type: "patch", name, value: this.serverStatus[name]};
             this.broadCast(JSON.stringify(event));
         }

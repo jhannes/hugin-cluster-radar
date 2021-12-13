@@ -26,7 +26,7 @@ export class VirtualMachineStatus<T> {
                         name,
                         app,
                         namespace,
-                        phase: "Running"
+                        phase: "Offline"
                     }));
                     this.statusServer.pollStatus(name, 15000, async () => await fetchJson(name))
                 }
