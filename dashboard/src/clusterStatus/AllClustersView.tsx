@@ -1,6 +1,6 @@
 import { useRecordHash } from "../lib/useRecordHash.tsx";
-import React, {useEffect, useRef, useState} from "react";
-import { BwStatus, PodStatusTree } from "./model.ts";
+import React, { useEffect, useRef, useState } from "react";
+import { BwStatus, HuginStatus, PodStatusTree } from "./model.ts";
 import { noneSelected } from "../lib/filterRecord.tsx";
 import { ClusterStatus } from "./ClusterStatus.tsx";
 import { PodFilterMenu } from "./PodFilterMenu.tsx";
@@ -25,11 +25,11 @@ export function AllClustersView({
     Record<string, PodStatusTree<BwStatus>>
   >({});
   const menuRef = useRef();
-  
+
   function handleClick(event: Event) {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-          setShowNav(false);
-      }
+    if (menuRef.current && !menuRef.current.contains(event.target)) {
+      setShowNav(false);
+    }
   }
 
   useEffect(() => {
@@ -51,21 +51,29 @@ export function AllClustersView({
     );
   }, [clusterTrees]);
   useEffect(() => {
-      if (showNav) {
-          document.addEventListener("click", handleClick);
-      } else {
-          document.removeEventListener("click", handleClick);
-      }
-      return () => document.removeEventListener("click", handleClick);
-  }, [showNav])
+    if (showNav) {
+      document.addEventListener("click", handleClick);
+    } else {
+      document.removeEventListener("click", handleClick);
+    }
+    return () => document.removeEventListener("click", handleClick);
+  }, [showNav]);
 
   return (
     <>
       <header>
-        <h1>
-          <button onClick={() => setShowNav(!showNav)}>☰</button>
-          HUGIN
-        </h1>
+        <button onClick={() => setShowNav(!showNav)}>☰</button>
+        <h1>Hugin</h1>
+        <div>
+          <label>
+            <input
+              type="checkbox"
+              checked={compactView}
+              onChange={(e) => setCompactView(e.target.checked)}
+            />
+            <div>Compact view</div>
+          </label>
+        </div>
       </header>
       <main>
         {Object.keys(clusters)

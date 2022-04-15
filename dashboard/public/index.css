@@ -25,16 +25,29 @@ h1 {
 
 header, footer {
     text-align: center;
+    padding-inline: 0.5em;
     padding-top: 0.2em;
     padding-bottom: 0.2em;
     background-color: beige;
+    box-shadow: 5px 5px 5px 0 gray;
+}
+
+header {
+    display: flex;
+    align-items: center;
+}
+
+header h1 {
+    text-transform: uppercase;
+    flex: 1;
 }
 
 nav {
     position: absolute;
     padding-top: 0.2em;
     padding-left: 0.2em;
-    height: calc(100vh - 0.2em);
+    top: 35px;
+    bottom: 0;
     z-index: 1;
     background-color: beige;
     width: 200px;
